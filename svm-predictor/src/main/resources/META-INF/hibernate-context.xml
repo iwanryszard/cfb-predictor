@@ -20,7 +20,7 @@
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://localhost:3306/svmpredictor" />
         <property name="username" value="root" />
-        <property name="password" value="***REMOVED***" />
+        <property name="password" value="1234" />
     </bean>
     
     <bean id="hibernate4AnnotatedSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
