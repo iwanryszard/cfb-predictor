@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      >
+ 
+  <h:form> 
+ 	<p:outputLabel value="#{startWebBean.startMessage}"></p:outputLabel>
+ 	<p:commandButton value="Stats" id="statsButton" update="@form" actionListener="#{startWebBean.getStats}" disabled="true"/>
+ 	<p:commandButton value="Spreads" id="spreadsButton" update="@form" actionListener="#{startWebBean.getSpreads}" disabled="true"/>
+ 	<p:commandButton value="Teams" id="teamsButton" update="@form" actionListener="#{startWebBean.getTeams}" />
+  </h:form>
+</html>
