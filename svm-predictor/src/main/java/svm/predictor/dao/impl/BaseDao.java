@@ -1,6 +1,7 @@
 package svm.predictor.dao.impl;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ public abstract class BaseDao<T extends BaseEntity<PK>, PK extends Serializable>
 			orderBy = "";
 		}
 		Query query = session.createQuery("from " + entityClass.getSimpleName() + " " + whereClause + " " + orderBy);
+		parameters = getParametersWithoutOperatorsAndNulls(parameters);
 		setQueryParameters(query, parameters);
 		List<T> result = query.list();
 		return result;
@@ -59,14 +61,55 @@ public abstract class BaseDao<T extends BaseEntity<PK>, PK extends Serializable>
 	
 	private String buildWhereClause(Map<String, Object> parameters) {
 		StringBuilder result = new StringBuilder();
-		for(String fieldName : parameters.keySet()) {
+		for(Map.Entry<String, Object>  entry : parameters.entrySet()) {
 			if(result.length() > 0) {
 				result.append(" AND ");
 			}
-			result.append(fieldName + " = :" + fieldName);
+			String fieldName = getFieldName(entry.getKey());
+			String operator = getOperator(entry.getKey());
+			String binding = getBinding(fieldName, entry.getValue());
+			result.append(fieldName + " " + operator + " " + binding);
 		}
 		
 		return "where " + result.toString();
+	}
+	
+	private String getFieldName(String fieldName) {
+		String[] result = fieldName.split(":");
+		return result[0];
+	}
+	
+	private String getOperator(String fieldName) {
+		String operator = "=";
+		String[] split = fieldName.split(":");
+		if(split.length == 2) {
+			operator = split[1];
+		}
+		
+		return operator;
+	}
+	
+	private String getBinding(String fieldName, Object value) {
+		String result = null;
+		if(value != null) {
+			result = ":" + fieldName;
+		} else {
+			result = "NULL";
+		}
+		
+		return result;
+	}
+	
+	private Map<String, Object> getParametersWithoutOperatorsAndNulls(Map<String, Object> parameters) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		for(Map.Entry<String, Object>  entry : parameters.entrySet()) {
+			if(entry.getValue() != null) {
+				String fieldName = getFieldName(entry.getKey());
+				result.put(fieldName, entry.getValue());
+			}
+		}
+		
+		return result;
 	}
 	
 	private void setQueryParameters(Query query, Map<String, Object> parameters) {

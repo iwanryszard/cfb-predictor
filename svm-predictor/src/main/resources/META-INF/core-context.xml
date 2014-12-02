@@ -30,4 +30,11 @@
     	<property name="dao" ref="teamDao"/>
     	<property name="assembler" ref="teamAssembler"/>
     </bean>
+    
+    <bean id="calculatedDistanceAssembler" class="svm.predictor.assembler.CalculatedDistanceAssembler" />
+    <bean id="calculatedDistanceDao" class="svm.predictor.dao.impl.CalculatedDistanceDaoImpl" parent="baseDao"/>
+    <bean id="calculatedDistanceService" class="svm.predictor.service.impl.CalculatedDistanceServiceImpl" parent="baseService">
+    	<property name="dao" ref="calculatedDistanceDao"/>
+    	<property name="assembler" ref="calculatedDistanceAssembler"/>
+    </bean>
 </beans>

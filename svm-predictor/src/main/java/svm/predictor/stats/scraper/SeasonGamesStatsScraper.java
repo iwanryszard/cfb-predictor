@@ -34,7 +34,7 @@ public class SeasonGamesStatsScraper {
 		int startYear = 2008;
 		int endYear = 2013;
 		
-		Map<Integer, String> teamMap = teamService.getTeamsMap();
+		Map<Integer, String> teamMap = teamService.getTeamNamesMap();
 		
 		for(int year = startYear; year <= endYear; ++year) {
 			logger.info("Starting with games for year: " + year);

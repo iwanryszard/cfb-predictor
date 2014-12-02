@@ -7,5 +7,6 @@ import svm.predictor.dto.TeamDto;
 
 public interface TeamService extends Service<TeamDto, Integer> {
 	void createTeams(List<TeamDto> teams);
-	Map<Integer, String> getTeamsMap();
+	Map<Integer, String> getTeamNamesMap();
+	Map<Integer, String> getTeamLocationsMap();
 }

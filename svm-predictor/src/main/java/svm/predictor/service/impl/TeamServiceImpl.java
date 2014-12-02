@@ -19,11 +19,22 @@ public class TeamServiceImpl extends BaseService<TeamDto, TeamDao, Team, Integer
 	}
 
 	@Override
-	public Map<Integer, String> getTeamsMap() {
+	public Map<Integer, String> getTeamNamesMap() {
 		Map<Integer, String> teamsMap = new TreeMap<Integer, String>();
 		List<TeamDto> teams = list();
 		for(TeamDto team : teams) {
 			teamsMap.put(team.getId(), team.getName());
+		}
+		
+		return teamsMap;
+	}
+
+	@Override
+	public Map<Integer, String> getTeamLocationsMap() {
+		Map<Integer, String> teamsMap = new TreeMap<Integer, String>();
+		List<TeamDto> teams = list();
+		for(TeamDto team : teams) {
+			teamsMap.put(team.getId(), team.getStadiumLocation());
 		}
 		
 		return teamsMap;

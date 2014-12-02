@@ -38,7 +38,7 @@ public class PointSpreadsSetter {
 	
 	public void setAllGamesPointSpreads() {
 		List<Date> gameDates = gameInfoService.getAllGameDates();
-		Map<Integer, String> teamMap = teamService.getTeamsMap();
+		Map<Integer, String> teamMap = teamService.getTeamNamesMap();
 		
 		for(Date gameDate : gameDates) {
 			logger.info("Setting spreads for date: " + gameDate);

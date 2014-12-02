@@ -57,8 +57,5 @@ public class TeamsStadiumLocationsSetter {
 		
 		teamService.createTeams(teams);
 		logger.info("Persisted teams");
-		
-		teamsMap = teamService.getTeamsMap();
-		logger.info("Number of teams loaded from DB: " + teamsMap.size());
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import svm.predictor.distance.calculation.GamesDistanceSetter;
 import svm.predictor.spreads.scraper.PointSpreadsSetter;
 import svm.predictor.stats.scraper.SeasonGamesStatsScraper;
 import svm.predictor.teams.scraper.TeamsStadiumLocationsSetter;
@@ -26,6 +27,9 @@ public class StartWebBean implements Serializable {
 	
 	@Autowired
 	private TeamsStadiumLocationsSetter teamsStadiumLocationsSetter;
+	
+	@Autowired
+	private GamesDistanceSetter gamesDistanceSetter;
 	
 	public String getStartMessage() {
 		logger.info("getStartMessage called...");
@@ -53,6 +57,14 @@ public class StartWebBean implements Serializable {
 			teamsStadiumLocationsSetter.createAllTeams();
 		} catch(Exception e) {
 			logger.info("Exception while getting teams", e);
+		}
+	}
+	
+	public void getDistances() {
+		try {
+			gamesDistanceSetter.setAllGamesDistances();
+		} catch(Exception e) {
+			logger.info("Exception while setting distances", e);
 		}
 	}
 }
