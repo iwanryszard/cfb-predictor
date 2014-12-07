@@ -11,6 +11,7 @@
  	<p:commandButton value="Stats" id="statsButton" update="@form" actionListener="#{startWebBean.getStats}" disabled="true"/>
  	<p:commandButton value="Spreads" id="spreadsButton" update="@form" actionListener="#{startWebBean.getSpreads}" disabled="true"/>
  	<p:commandButton value="Teams" id="teamsButton" update="@form" actionListener="#{startWebBean.getTeams}" disabled="true"/>
- 	<p:commandButton value="Distances" id="distancesButton" update="@form" actionListener="#{startWebBean.getDistances}" />
+ 	<p:commandButton value="Distances" id="distancesButton" update="@form" actionListener="#{startWebBean.getDistances}" disabled="true"/>
+ 	<p:commandButton value="AggregateStats" id="aggregateButton" update="@form" actionListener="#{startWebBean.aggregateGameStats}" />
   </h:form>
 </html>

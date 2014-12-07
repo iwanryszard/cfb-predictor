@@ -1,6 +1,8 @@
 package svm.predictor.stats.web;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import svm.predictor.distance.calculation.GamesDistanceSetter;
+import svm.predictor.dto.TeamAggregatedGameStatsDto;
+import svm.predictor.dto.TeamSimpleAggregatedStats;
+import svm.predictor.service.GameInfoService;
 import svm.predictor.spreads.scraper.PointSpreadsSetter;
 import svm.predictor.stats.scraper.SeasonGamesStatsScraper;
 import svm.predictor.teams.scraper.TeamsStadiumLocationsSetter;
@@ -30,6 +35,9 @@ public class StartWebBean implements Serializable {
 	
 	@Autowired
 	private GamesDistanceSetter gamesDistanceSetter;
+	
+	@Autowired
+	private GameInfoService gameInfoService;
 	
 	public String getStartMessage() {
 		logger.info("getStartMessage called...");
@@ -65,6 +73,24 @@ public class StartWebBean implements Serializable {
 			gamesDistanceSetter.setAllGamesDistances();
 		} catch(Exception e) {
 			logger.info("Exception while setting distances", e);
+		}
+	}
+	
+	public void aggregateGameStats() {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.set(2013, Calendar.AUGUST, 15);
+			Date seasonStart = cal.getTime();
+			cal.set(2014, Calendar.JANUARY, 20);
+			Date currentGame = cal.getTime();
+			TeamAggregatedGameStatsDto stats = gameInfoService.getTeamAggregatedStats(472, seasonStart, currentGame);
+			stats.toString();
+			TeamSimpleAggregatedStats last5Games = gameInfoService.getPreviousNGamesStats(472, 5, currentGame);
+			last5Games.toString();
+			TeamSimpleAggregatedStats lastSeason = gameInfoService.getSimpleSeasonStats(472, seasonStart, currentGame);
+			lastSeason.toString();
+		} catch(Exception e) {
+			logger.info("Exception while aggregating stats", e);
 		}
 	}
 }
