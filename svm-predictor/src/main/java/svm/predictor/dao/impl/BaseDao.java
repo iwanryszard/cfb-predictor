@@ -48,18 +48,18 @@ public abstract class BaseDao<T extends BaseEntity<PK>, PK extends Serializable>
 	@Override
 	public List<T> list(Map<String, Object> parameters, String orderBy) {
 		Session session = sessionFactory.getCurrentSession();
-		String whereClause = buildWhereClause(parameters);
+		Map<String, Object> parametersWithoutOperatorsAndNulls = new HashMap<String, Object>();
+		String whereClause = buildWhereClause(parameters, parametersWithoutOperatorsAndNulls);
 		if(orderBy == null) {
 			orderBy = "";
 		}
 		Query query = session.createQuery("from " + entityClass.getSimpleName() + " " + whereClause + " " + orderBy);
-		parameters = getParametersWithoutOperatorsAndNulls(parameters);
-		setQueryParameters(query, parameters);
+		setQueryParameters(query, parametersWithoutOperatorsAndNulls);
 		List<T> result = query.list();
 		return result;
 	}
 	
-	private String buildWhereClause(Map<String, Object> parameters) {
+	private String buildWhereClause(Map<String, Object> parameters, Map<String, Object> parametersWithoutOperatorsAndNulls) {
 		StringBuilder result = new StringBuilder();
 		for(Map.Entry<String, Object>  entry : parameters.entrySet()) {
 			if(result.length() > 0) {
@@ -67,7 +67,7 @@ public abstract class BaseDao<T extends BaseEntity<PK>, PK extends Serializable>
 			}
 			String fieldName = getFieldName(entry.getKey());
 			String operator = getOperator(entry.getKey());
-			String binding = getBinding(fieldName, entry.getValue());
+			String binding = getBinding(fieldName, entry.getValue(), parametersWithoutOperatorsAndNulls);
 			result.append(fieldName + " " + operator + " " + binding);
 		}
 		
@@ -89,24 +89,18 @@ public abstract class BaseDao<T extends BaseEntity<PK>, PK extends Serializable>
 		return operator;
 	}
 	
-	private String getBinding(String fieldName, Object value) {
+	private String getBinding(String fieldName, Object value, Map<String, Object> parameters) {
 		String result = null;
 		if(value != null) {
+			int i = 0;
+			while(parameters.containsKey(fieldName)) {
+				fieldName += i;
+				++i;
+			}
+			parameters.put(fieldName, value);
 			result = ":" + fieldName;
 		} else {
 			result = "NULL";
-		}
-		
-		return result;
-	}
-	
-	private Map<String, Object> getParametersWithoutOperatorsAndNulls(Map<String, Object> parameters) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		for(Map.Entry<String, Object>  entry : parameters.entrySet()) {
-			if(entry.getValue() != null) {
-				String fieldName = getFieldName(entry.getKey());
-				result.put(fieldName, entry.getValue());
-			}
 		}
 		
 		return result;

@@ -15,6 +15,7 @@ import svm.predictor.dto.TeamAggregatedGameStatsDto;
 import svm.predictor.dto.TeamSimpleAggregatedStats;
 import svm.predictor.service.GameInfoService;
 import svm.predictor.spreads.scraper.PointSpreadsSetter;
+import svm.predictor.stats.aggregation.StatsAggregator;
 import svm.predictor.stats.scraper.SeasonGamesStatsScraper;
 import svm.predictor.teams.scraper.TeamsStadiumLocationsSetter;
 
@@ -37,7 +38,7 @@ public class StartWebBean implements Serializable {
 	private GamesDistanceSetter gamesDistanceSetter;
 	
 	@Autowired
-	private GameInfoService gameInfoService;
+	private StatsAggregator statsAggregator;
 	
 	public String getStartMessage() {
 		logger.info("getStartMessage called...");
@@ -78,17 +79,7 @@ public class StartWebBean implements Serializable {
 	
 	public void aggregateGameStats() {
 		try {
-			Calendar cal = Calendar.getInstance();
-			cal.set(2013, Calendar.AUGUST, 15);
-			Date seasonStart = cal.getTime();
-			cal.set(2014, Calendar.JANUARY, 20);
-			Date currentGame = cal.getTime();
-			TeamAggregatedGameStatsDto stats = gameInfoService.getTeamAggregatedStats(472, seasonStart, currentGame);
-			stats.toString();
-			TeamSimpleAggregatedStats last5Games = gameInfoService.getPreviousNGamesStats(472, 5, currentGame);
-			last5Games.toString();
-			TeamSimpleAggregatedStats lastSeason = gameInfoService.getSimpleSeasonStats(472, seasonStart, currentGame);
-			lastSeason.toString();
+			statsAggregator.aggregateGamesForSeasons(2010, 2013);
 		} catch(Exception e) {
 			logger.info("Exception while aggregating stats", e);
 		}

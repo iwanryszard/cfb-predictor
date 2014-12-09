@@ -70,7 +70,7 @@ public class GameInfoDaoImpl extends BaseDao<GameInfo, Integer> implements GameI
 		return result.get(0);
 	}
 	
-	private String teamAggregatedStatsQuery = "select count(*) as gamesPlayed, \r\n" + 
+	private String teamAggregatedStatsQuery = "select count(*) as gamesPlayed, (count(win) / count(*)) * 100 as winPct, (count(winATS) / count(*)) * 100 as winATSPct,\r\n" + 
 			"avg(rushOffAtts) as rushOffAttAvg, avg(rushOffYards) as rushOffYardsAvg, sum(rushOffYards) / sum(rushOffAtts) as rushOffYPA, avg(rushOffTDs) as rushOffTDsAvg, \r\n" + 
 			"avg(rushDefAtts) as rushDefAttAvg, avg(rushDefYards) as rushDefYardsAvg, sum(rushDefYards) / sum(rushDefAtts) as rushDefYPA, avg(rushDefTDs) as rushDefTDsAvg, \r\n" + 
 			"avg(passOffAtts) as passOffAttAvg, avg(passOffComp) as passOffCompAvg, (sum(passOffComp) / sum(passOffAtts)) * 100 as passOffCompPct,\r\n" + 
@@ -113,7 +113,9 @@ public class GameInfoDaoImpl extends BaseDao<GameInfo, Integer> implements GameI
 			"avg(redZoneDefTDs) as defRedZoneTDsAvg, (sum(redZoneDefTDs) / sum(redZoneDefAtt)) * 100 as defRedZoneTDPct, avg(redZoneDefFGs) as defRedZoneFGsAvg, (sum(redZoneDefFGs) / sum(redZoneDefAtt)) * 100 as defRedZoneFGPct,\r\n" + 
 			"avg(fumbleGain) as fumbleGainAvg, avg(fumbleLost) as fubmleLostAvg, avg(turnoverMargin) as turnoverMarginAvg\r\n" + 
 			"FROM\r\n" + 
-			"((SELECT home_rush_off_att as rushOffAtts, home_rush_off_yards as rushOffYards, home_rush_off_tds as rushOffTDs, \r\n" + 
+			"((SELECT (CASE WHEN home_team_points >= away_team_points THEN 1 ELSE NULL END) as win,\r\n" +
+			"(CASE WHEN home_team_points + COALESCE(point_spread, 0) >= away_team_points THEN 1 ELSE NULL END) as winATS,\r\n" +
+			"home_rush_off_att as rushOffAtts, home_rush_off_yards as rushOffYards, home_rush_off_tds as rushOffTDs, \r\n" + 
 			"away_rush_off_att as rushDefAtts, away_rush_off_yards as rushDefYards, away_rush_off_tds as rushDefTDs, \r\n" + 
 			"home_pass_off_att as passOffAtts, home_pass_off_comp as passOffComp, home_pass_off_yards as passOffYards, home_pass_off_ints as passOffInts,\r\n" + 
 			"home_pass_off_tds as passOffTDs, home_pass_off_rating as passOffRating,\r\n" + 
@@ -153,7 +155,9 @@ public class GameInfoDaoImpl extends BaseDao<GameInfo, Integer> implements GameI
 			"where home_team_id = :teamId AND game_date > :seasonStart\r\n" + 
 			"AND game_date < :currentGame)\r\n" + 
 			"UNION ALL\r\n" + 
-			"(SELECT away_rush_off_att as rushOffAtts, away_rush_off_yards as rushOffYards, away_rush_off_tds as rushOffTDs, \r\n" + 
+			"(SELECT (CASE WHEN home_team_points <= away_team_points THEN 1 ELSE NULL END) as win,\r\n" +
+			"(CASE WHEN home_team_points + COALESCE(point_spread, 0) <= away_team_points THEN 1 ELSE NULL END) as winATS,\r\n" +
+			"away_rush_off_att as rushOffAtts, away_rush_off_yards as rushOffYards, away_rush_off_tds as rushOffTDs, \r\n" + 
 			"home_rush_off_att as rushDefAtts, home_rush_off_yards as rushDefYards, home_rush_off_tds as rushDefTDs, \r\n" + 
 			"away_pass_off_att as passOffAtts, away_pass_off_comp as passOffComp, away_pass_off_yards as passOffYards, away_pass_off_ints as passOffInts,\r\n" + 
 			"away_pass_off_tds as passOffTDs, away_pass_off_rating as passOffRating,\r\n" + 

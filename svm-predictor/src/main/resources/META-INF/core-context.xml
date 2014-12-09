@@ -37,4 +37,13 @@
     	<property name="dao" ref="calculatedDistanceDao"/>
     	<property name="assembler" ref="calculatedDistanceAssembler"/>
     </bean>
+    
+    <bean id="aggregatedGameStatsAssembler" class="svm.predictor.assembler.AggregatedGameStatsAssembler" >
+    	<property name="gameInfoAssembler" ref="gameInfoAssembler"/>
+   	</bean>
+    <bean id="aggregatedGameStatsDao" class="svm.predictor.dao.impl.AggregatedGameStatsDaoImpl" parent="baseDao"/>
+    <bean id="aggregatedGameStatsService" class="svm.predictor.service.impl.AggregatedGameStatsServiceImpl" parent="baseService">
+    	<property name="dao" ref="aggregatedGameStatsDao"/>
+    	<property name="assembler" ref="aggregatedGameStatsAssembler"/>
+    </bean>
 </beans>

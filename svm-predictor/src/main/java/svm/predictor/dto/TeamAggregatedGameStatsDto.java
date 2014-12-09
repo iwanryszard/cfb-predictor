@@ -7,6 +7,9 @@ public class TeamAggregatedGameStatsDto {
 
 	private BigInteger gamesPlayed;
 	
+	private BigDecimal winPct;
+	private BigDecimal winATSPct;
+	
 	private BigDecimal rushOffAttAvg;
 	private BigDecimal rushOffYardsAvg;
 	private BigDecimal rushOffYPA;
@@ -765,6 +768,18 @@ public class TeamAggregatedGameStatsDto {
 	}
 	public void setGamesPlayed(BigInteger gamesPlayed) {
 		this.gamesPlayed = gamesPlayed;
+	}
+	public BigDecimal getWinPct() {
+		return winPct;
+	}
+	public void setWinPct(BigDecimal winPct) {
+		this.winPct = winPct;
+	}
+	public BigDecimal getWinATSPct() {
+		return winATSPct;
+	}
+	public void setWinATSPct(BigDecimal winATSPct) {
+		this.winATSPct = winATSPct;
 	}
 	public BigDecimal getRushOffYPA() {
 		return rushOffYPA;
