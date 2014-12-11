@@ -84,4 +84,13 @@ public class StartWebBean implements Serializable {
 			logger.info("Exception while aggregating stats", e);
 		}
 	}
+	
+	public void createSVMFiles() {
+		try {
+			statsAggregator.createSVMFile(2010, 2011, "cfb");
+			statsAggregator.createSVMFile(2012, 2013, "cfb.t");
+		} catch(Exception e) {
+			logger.info("Exception while creating SVM files", e);
+		}
+	}
 }

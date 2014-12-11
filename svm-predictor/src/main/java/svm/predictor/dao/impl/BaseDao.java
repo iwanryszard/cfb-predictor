@@ -93,6 +93,7 @@ public abstract class BaseDao<T extends BaseEntity<PK>, PK extends Serializable>
 		String result = null;
 		if(value != null) {
 			int i = 0;
+			fieldName = fieldName.replace(".", "");
 			while(parameters.containsKey(fieldName)) {
 				fieldName += i;
 				++i;
