@@ -3,7 +3,6 @@ package svm.predictor.stats.aggregation;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -117,15 +116,15 @@ public class StatsAggregator {
 		return seasonEnd;
 	}
 	
-	public void createSVMFile(int startSeason, int endSeason, String fileName) {
+	public SvmDataDto getGamesAsSvmData(int startSeason, int endSeason) {
 		Date seasonStart = getSeasonStartDate(startSeason);
 		Date seasonEnd = getSeasonEndDate(endSeason);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("game.gameDate:>", seasonStart);
 		params.put("game.gameDate:<", seasonEnd);
-		params.put("homeGamesPlayed:>", BigInteger.valueOf(1));
-		params.put("awayGamesPlayed:>", BigInteger.valueOf(1));
+//		params.put("homeGamesPlayed:>", BigInteger.valueOf(2));
+//		params.put("awayGamesPlayed:>", BigInteger.valueOf(2));
 		List<AggregatedGameStatsDto> aggregatedGames = aggregatedGameStatsService.list(params, null);
 		logger.info("Fetched {} game aggregations from {} to {}", aggregatedGames.size(), startSeason, endSeason);
 		
@@ -156,7 +155,16 @@ public class StatsAggregator {
 		logger.info("Labels size: {}", labels.size());
 		logger.info("Feature row size: {}", features.get(0).size());
 		
-		writeToFile(fileName, labels, features);
+		SvmDataDto result = new SvmDataDto();
+		result.setLabels(labels);
+		result.setFeatures(features);
+		
+		return result;
+	}
+	
+	public void createSVMFile(int startSeason, int endSeason, String fileName) {
+		SvmDataDto svmData = getGamesAsSvmData(startSeason, endSeason);
+		writeToFile(fileName, svmData.getLabels(), svmData.getFeatures());
 	}
 	
 	private void writeToFile(String fileName, List<Integer> labels, List<List<Number>> features) {
@@ -217,8 +225,8 @@ public class StatsAggregator {
 		value = stats.getDefRedZoneAttAvg();
 		features.add(value);
 		
-		value = stats.getDefRedZoneFGPct();
-		features.add(value);
+//		value = stats.getDefRedZoneFGPct();
+//		features.add(value);
 		
 		value = stats.getDefRedZoneScorePct();
 		features.add(value);
@@ -226,38 +234,38 @@ public class StatsAggregator {
 		value = stats.getDefRedZoneTDPct();
 		features.add(value);
 		
-		value = stats.getFgDefAttAvg();
-		features.add(value);
+//		value = stats.getFgDefAttAvg();
+//		features.add(value);
 		
 		value = stats.getFGDefPct();
 		features.add(value);
 		
-		value = stats.getFgOffAttAvg();
-		features.add(value);
+//		value = stats.getFgOffAttAvg();
+//		features.add(value);
 		
 		value = stats.getFGOffPct();
 		features.add(value);
 		
-		value = stats.getFirstDownDefPassAvg();
-		features.add(value);
-		
-		value = stats.getFirstDownDefPenaltyAvg();
-		features.add(value);
-		
-		value = stats.getFirstDownDefRushAvg();
-		features.add(value);
+//		value = stats.getFirstDownDefPassAvg();
+//		features.add(value);
+//		
+//		value = stats.getFirstDownDefPenaltyAvg();
+//		features.add(value);
+//		
+//		value = stats.getFirstDownDefRushAvg();
+//		features.add(value);
 		
 		value = stats.getFirstDownDefTotalAvg();
 		features.add(value);
 		
-		value = stats.getFirstDownOffPassAvg();
-		features.add(value);
-		
-		value = stats.getFirstDownOffPenaltyAvg();
-		features.add(value);
-		
-		value = stats.getFirstDownOffRushAvg();
-		features.add(value);
+//		value = stats.getFirstDownOffPassAvg();
+//		features.add(value);
+//		
+//		value = stats.getFirstDownOffPenaltyAvg();
+//		features.add(value);
+//		
+//		value = stats.getFirstDownOffRushAvg();
+//		features.add(value);
 		
 		value = stats.getFirstDownOffTotalAvg();
 		features.add(value);
@@ -298,8 +306,8 @@ public class StatsAggregator {
 		value = stats.getOffRedZoneAttAvg();
 		features.add(value);
 		
-		value = stats.getOffRedZoneFGPct();
-		features.add(value);
+//		value = stats.getOffRedZoneFGPct();
+//		features.add(value);
 		
 		value = stats.getOffRedZoneScorePct();
 		features.add(value);
