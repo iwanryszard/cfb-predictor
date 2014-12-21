@@ -3,7 +3,9 @@ package svm.predictor.stats.web;
 import java.io.Serializable;
 import java.util.List;
 
+import libsvm.svm;
 import libsvm.svm_model;
+import libsvm.svm_parameter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,19 +14,26 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import svm.predictor.distance.calculation.GamesDistanceSetter;
+import svm.predictor.libsvm.PredictionResultDto;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;
+import svm.predictor.libsvm.data.retrieving.SvmDataDto;
+import svm.predictor.libsvm.data.retrieving.SvmFileCreator;
 import svm.predictor.libsvm.data.scaling.DataScaler;
 import svm.predictor.libsvm.data.scaling.ScaleResultDto;
 import svm.predictor.spreads.scraper.PointSpreadsSetter;
 import svm.predictor.stats.aggregation.StatsAggregator;
-import svm.predictor.stats.aggregation.SvmDataDto;
 import svm.predictor.stats.scraper.SeasonGamesStatsScraper;
 import svm.predictor.teams.scraper.TeamsStadiumLocationsSetter;
 
 @Component("startWebBean")
 @Scope("view")
 public class StartWebBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4908658319328161071L;
 
 	private static Logger logger = LoggerFactory.getLogger(StartWebBean.class);
 	
@@ -44,13 +53,7 @@ public class StartWebBean implements Serializable {
 	private StatsAggregator statsAggregator;
 	
 	@Autowired
-	private DataScaler dataScaler;
-	
-	@Autowired
-	private SvmTrainer svmTrainer;
-	
-	@Autowired
-	private SvmPredictor svmPredictor;
+	private SvmFileCreator svmFileCreator;
 	
 	public String getStartMessage() {
 		logger.info("getStartMessage called...");
@@ -99,36 +102,10 @@ public class StartWebBean implements Serializable {
 	
 	public void createSVMFiles() {
 		try {
-			statsAggregator.createSVMFile(2010, 2011, "cfb");
-			statsAggregator.createSVMFile(2013, 2013, "cfb.t");
+			svmFileCreator.createSVMFile(2010, 2011, "cfb", null);
+			svmFileCreator.createSVMFile(2013, 2013, "cfb.t", null);
 		} catch(Exception e) {
 			logger.info("Exception while creating SVM files", e);
-		}
-	}
-	
-	public void trainAndPredictInMemory() {
-		try {
-			SvmDataDto trainingData = statsAggregator.getGamesAsSvmData(2010, 2011);
-			ScaleResultDto scaledTrainingData = dataScaler.getScaledData(trainingData.getLabels(), trainingData.getFeatures(), 
-					-1.0, 1.0, null, null, null);
-		
-			SvmDataDto testingData = statsAggregator.getGamesAsSvmData(2013, 2013);
-			ScaleResultDto scaledTestingData = dataScaler.getScaledData(testingData.getLabels(), testingData.getFeatures(), 
-					null, null, null, null, scaledTrainingData.getScaleRestoreDto());
-		
-			svm_model model = svmTrainer.trainModel(scaledTrainingData.getLabels(), scaledTrainingData.getFeatures());
-			
-			List<Double> predictions = svmPredictor.predict(scaledTestingData.getLabels(), scaledTestingData.getFeatures(), model, null);
-			List<Double> expectedResult = scaledTestingData.getLabels();
-			int correct = 0;
-			for(int i = 0; i < predictions.size(); ++i) {
-				if(predictions.get(i).equals(expectedResult.get(i))) {
-					++correct;
-				}
-			}
-			logger.info("Accuracy = " + (double) correct / predictions.size() * 100 + "% (" + correct + "/" + predictions.size() + ")");
-		} catch(Exception e) {
-			logger.info("Exception while creating scaled SVM files", e);
 		}
 	}
 }

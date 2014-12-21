@@ -44,7 +44,7 @@ public class SvmTrainer {
 		return model;
 	}
 	
-	public void crossValidation(List<Double> labels, List<List<IndexValuePair>> features, int foldNumber) {
+	public CrossValidationResultDto crossValidation(List<Double> labels, List<List<IndexValuePair>> features, int foldNumber) {
 		svm_parameter param = getParameters(null, null, null, null, null);
 		svm.svm_set_print_string_function(print_func);
 		
@@ -64,6 +64,7 @@ public class SvmTrainer {
 		
 		svm.svm_cross_validation(prob, param, foldNumber, target);
 		
+		CrossValidationResultDto result = new CrossValidationResultDto();
 		if (param.svm_type == svm_parameter.EPSILON_SVR || param.svm_type == svm_parameter.NU_SVR) {
 			for (i = 0; i < prob.l; i++) {
 				double y = prob.y[i];
@@ -75,18 +76,25 @@ public class SvmTrainer {
 				sumyy += y * y;
 				sumvy += v * y;
 			}
-			logger.info("Cross Validation Mean squared error = " + total_error / prob.l + "\n");
-			logger.info("Cross Validation Squared correlation coefficient = "
-							+ ((prob.l * sumvy - sumv * sumy) * (prob.l * sumvy - sumv * sumy))
-							/ ((prob.l * sumvv - sumv * sumv) * (prob.l * sumyy - sumy * sumy)) + "\n");
+			double meanSquaredError = total_error / prob.l;
+			result.setMeanSquaredError(meanSquaredError);
+			logger.info("Cross Validation Mean squared error = " + meanSquaredError + "\n");
+			double squaredCorrelCoef = ((prob.l * sumvy - sumv * sumy) * (prob.l * sumvy - sumv * sumy))
+					/ ((prob.l * sumvv - sumv * sumv) * (prob.l * sumyy - sumy * sumy));
+			result.setSquaredCorrelCoef(squaredCorrelCoef);
+			logger.info("Cross Validation Squared correlation coefficient = " + squaredCorrelCoef + "\n");
 		} else {
 			for (i = 0; i < prob.l; i++) {
 				if (target[i] == prob.y[i]) {
 					++total_correct;
 				}
 			}
-			logger.info("Cross Validation Accuracy = " + 100.0 * total_correct / prob.l + "%\n");
+			double accuracy = 100.0 * total_correct / prob.l;
+			result.setAccuracy(accuracy);
+			logger.info("Cross Validation Accuracy = " + accuracy + "%\n");
 		}
+		
+		return result;
 	}
 	
 	private svm_parameter getParameters(Integer kernelType, Integer degree, Double c, Double gamma, Boolean probability) {

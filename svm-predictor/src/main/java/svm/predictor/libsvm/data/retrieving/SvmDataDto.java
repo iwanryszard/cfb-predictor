@@ -1,4 +1,4 @@
-package svm.predictor.stats.aggregation;
+package svm.predictor.libsvm.data.retrieving;
 
 import java.util.List;
 
