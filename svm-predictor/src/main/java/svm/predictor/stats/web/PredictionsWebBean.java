@@ -1,7 +1,14 @@
 package svm.predictor.stats.web;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
+
+import libsvm.svm;
+import libsvm.svm_model;
+import libsvm.svm_parameter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import libsvm.svm;
-import libsvm.svm_model;
-import libsvm.svm_parameter;
 import svm.predictor.libsvm.PredictionResultDto;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;
+import svm.predictor.libsvm.data.retrieving.BaseDataRetriever;
+import svm.predictor.libsvm.data.retrieving.MoneyLineDataRetriever;
+import svm.predictor.libsvm.data.retrieving.PointSpreadDataRetriever;
+import svm.predictor.libsvm.data.retrieving.PointTotalDataRetriever;
 import svm.predictor.libsvm.data.retrieving.SvmDataDto;
 import svm.predictor.libsvm.data.retrieving.SvmDataRetriever;
 import svm.predictor.libsvm.data.scaling.DataScaler;
@@ -42,11 +50,18 @@ public class PredictionsWebBean implements Serializable {
 	
 	private String resultMessage;
 	
+	private String trainingSummaryMsg;
+	private String testingSummaryMsg;
+	
 	private svm_model model;
 	
 	private boolean modelTrained;
 	
 	private ScaleRestoreDto scaleRestoreDto;
+	
+	private List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Money Line");
+	
+	private String selectedPredictionType;
 	
 	@Autowired
 	private DataScaler dataScaler;
@@ -62,7 +77,9 @@ public class PredictionsWebBean implements Serializable {
 	
 	public void trainModel() {
 		modelTrained = false;
-		SvmDataDto trainingData = svmDataRetriever.getGamesAsSvmData(trainingStartYear, trainingEndYear, minimumGamesPlayed);
+		BaseDataRetriever dataRetriever = getDataRetriever();
+		SvmDataDto trainingData = svmDataRetriever.getGamesAsSvmData(trainingStartYear, trainingEndYear, minimumGamesPlayed, dataRetriever);
+		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getFeatures().get(0).size() + " features each";
 		ScaleResultDto scaledTrainingData = dataScaler.getScaledData(trainingData.getLabels(), trainingData.getFeatures(), 
 				-1.0, 1.0, null, null, null);
 		scaleRestoreDto = scaledTrainingData.getScaleRestoreDto();
@@ -71,7 +88,9 @@ public class PredictionsWebBean implements Serializable {
 	}
 	
 	public void predict() {
-		SvmDataDto testingData = svmDataRetriever.getGamesAsSvmData(testingStartYear, testingEndYear, minimumGamesPlayed);
+		BaseDataRetriever dataRetriever = getDataRetriever();
+		SvmDataDto testingData = svmDataRetriever.getGamesAsSvmData(testingStartYear, testingEndYear, minimumGamesPlayed, dataRetriever);
+		testingSummaryMsg = testingData.getLabels().size() + " games with " + testingData.getFeatures().get(0).size() + " features each";
 		ScaleResultDto scaledTestingData = dataScaler.getScaledData(testingData.getLabels(), testingData.getFeatures(), null, null,
 				null, null, scaleRestoreDto);
 
@@ -105,9 +124,26 @@ public class PredictionsWebBean implements Serializable {
 					+ ((total * sumvy - sumv * sumy) * (total * sumvy - sumv * sumy))
 					/ ((total * sumvv - sumv * sumv) * (total * sumyy - sumy * sumy)) + " (regression)\n");
 		} else {
-			resultMessage = "Accuracy = " + (double) correct / total * 100 + "% (" + correct + "/" + total + ") (classification)";
+			NumberFormat formatter = new DecimalFormat("#0.00");
+			double accuracy = (double) correct / total * 100;
+			resultMessage = "Accuracy = " + formatter.format(accuracy) + "% (" + correct + "/" + total + ") (classification)";
 			logger.info(resultMessage);
 		}
+	}
+	
+	private BaseDataRetriever getDataRetriever() {
+		BaseDataRetriever result = null;
+		if(selectedPredictionType.equals("Point Spread")) {
+			result = new PointSpreadDataRetriever();
+		} else if(selectedPredictionType.equals("Point Total")) {
+			result = new PointTotalDataRetriever();
+		} else if(selectedPredictionType.equals("Money Line")) {
+			result = new MoneyLineDataRetriever();
+		} else {
+			result = new PointSpreadDataRetriever();
+		}
+		
+		return result;
 	}
 
 	public Integer getTrainingStartYear() {
@@ -164,6 +200,38 @@ public class PredictionsWebBean implements Serializable {
 
 	public void setModelTrained(boolean modelTrained) {
 		this.modelTrained = modelTrained;
+	}
+
+	public List<String> getPredictionTypes() {
+		return predictionTypes;
+	}
+
+	public void setPredictionTypes(List<String> predictionTypes) {
+		this.predictionTypes = predictionTypes;
+	}
+
+	public String getSelectedPredictionType() {
+		return selectedPredictionType;
+	}
+
+	public void setSelectedPredictionType(String selectedPredictionType) {
+		this.selectedPredictionType = selectedPredictionType;
+	}
+
+	public String getTrainingSummaryMsg() {
+		return trainingSummaryMsg;
+	}
+
+	public void setTrainingSummaryMsg(String trainingSummaryMsg) {
+		this.trainingSummaryMsg = trainingSummaryMsg;
+	}
+
+	public String getTestingSummaryMsg() {
+		return testingSummaryMsg;
+	}
+
+	public void setTestingSummaryMsg(String testingSummaryMsg) {
+		this.testingSummaryMsg = testingSummaryMsg;
 	}
 
 }

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.GameInfoDto;
-import svm.predictor.dto.GameSpreadDto;
 import svm.predictor.service.GameInfoService;
 import svm.predictor.service.TeamService;
 import svm.predictor.service.impl.DocumentGetter;
@@ -36,28 +35,28 @@ public class PointSpreadsSetter {
 	@Autowired
 	private DocumentGetter documentGetter;
 	
-	public void setAllGamesPointSpreads() {
+	public void setAllGamesBookValues(BookValueScraper bookValueScraper) {
 		List<Date> gameDates = gameInfoService.getAllGameDates();
 		Map<Integer, String> teamMap = teamService.getTeamNamesMap();
 		
 		for(Date gameDate : gameDates) {
-			logger.info("Setting spreads for date: " + gameDate);
-			List<GameSpreadDto> spreads = datePointSpreadsScraper.getSpreads(gameDate);
-			logger.info("Fetched " + spreads.size() + " spreads");
-			if( !spreads.isEmpty()) {
+			logger.info("Setting book values for date: " + gameDate);
+			List<GameBookValueDto> bookValues = datePointSpreadsScraper.getBookValues(gameDate, bookValueScraper);
+			logger.info("Fetched " + bookValues.size() + " book values");
+			if( !bookValues.isEmpty()) {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("gameDate", gameDate);
 				List<GameInfoDto> games = gameInfoService.list(params, null);
 				logger.info("Found " + games.size() + " games");
 				
-				gameToPointSpreadMapper.setPointSpreads(games, spreads, teamMap);
+				gameToPointSpreadMapper.setBookValues(games, bookValues, teamMap, bookValueScraper);
 			
 				gameInfoService.updateGameInfos(games);
-				logger.info("Spreads persisted");
+				logger.info("Book values persisted");
 			} else {
-				logger.info("No spreads found for date: " + gameDate);
+				logger.info("No book values found for date: " + gameDate);
 			}
-			logger.info("Finished setting spreads for date: " + gameDate);
+			logger.info("Finished setting book values for date: " + gameDate);
 		}
 	}
 }

@@ -6,6 +6,7 @@ public class TeamSimpleAggregatedStats {
 
 	private BigDecimal winPct;
 	private BigDecimal winATSPct;
+	private BigDecimal underPct;
 	private BigDecimal rushOffYardsAvg;
 	private BigDecimal passOffYardsAvg;
 	private BigDecimal scoringOffPointsAvg;
@@ -24,6 +25,12 @@ public class TeamSimpleAggregatedStats {
 	}
 	public void setWinATSPct(BigDecimal winATSPct) {
 		this.winATSPct = winATSPct;
+	}
+	public BigDecimal getUnderPct() {
+		return underPct;
+	}
+	public void setUnderPct(BigDecimal underPct) {
+		this.underPct = underPct;
 	}
 	public BigDecimal getRushOffYardsAvg() {
 		return rushOffYardsAvg;

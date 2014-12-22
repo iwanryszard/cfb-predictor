@@ -1,10 +1,10 @@
-package svm.predictor.dto;
+package svm.predictor.spreads.scraper;
 
-public class GameSpreadDto {
+public class GameBookValueDto {
 
 	private String homeTeam;
 	private String awayTeam;
-	private Double spread;
+	private BookValuesDto bookValues;
 	
 	public String getHomeTeam() {
 		return homeTeam;
@@ -18,10 +18,11 @@ public class GameSpreadDto {
 	public void setAwayTeam(String awayTeam) {
 		this.awayTeam = awayTeam;
 	}
-	public Double getSpread() {
-		return spread;
+	public BookValuesDto getBookValues() {
+		return bookValues;
 	}
-	public void setSpread(Double spread) {
-		this.spread = spread;
+	public void setBookValues(BookValuesDto bookValues) {
+		this.bookValues = bookValues;
 	}
+
 }

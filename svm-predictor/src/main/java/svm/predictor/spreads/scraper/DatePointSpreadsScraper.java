@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import svm.predictor.dto.GameSpreadDto;
 import svm.predictor.service.impl.DocumentGetter;
 
 @Service("datePointSpreadsScraper")
@@ -24,9 +23,7 @@ public class DatePointSpreadsScraper {
 
 	private static Logger logger = LoggerFactory.getLogger(DatePointSpreadsScraper.class);
 	
-	private static String spreadsBaseURL = "http://www.sportsbookreview.com/betting-odds/college-football/?date=";
-	private static String HALF = "½";
-	private static String spreadOddSeparator = Character.toString((char)160);
+	private static String bookValuesBaseURL = "http://www.sportsbookreview.com/betting-odds/college-football";
 	
 	@Autowired
 	private DocumentGetter documentGetter;
@@ -37,18 +34,18 @@ public class DatePointSpreadsScraper {
 		dateFormat = new SimpleDateFormat("yyyyMMdd");
 	}
 	
-	public List<GameSpreadDto> getSpreads(Date date) {
+	public List<GameBookValueDto> getBookValues(Date date, BookValueScraper valueScraper) {
 		String strDate = dateFormat.format(date);
-		logger.info("Getting spreads for date: " + strDate);
-		String url = spreadsBaseURL + strDate;
+		logger.info("Getting book values for date: " + strDate);
+		String url = bookValuesBaseURL + valueScraper.getSpecificUrlPart() + "/?date=" + strDate;
 		Map<String, String> cookies = buildCookies();
 		Document doc = documentGetter.getDocument(url, cookies);
 		
-		List<GameSpreadDto> gameSpreads = new ArrayList<GameSpreadDto>();
+		List<GameBookValueDto> result = new ArrayList<GameBookValueDto>();
 		Elements eventLinesGroup = doc.select("div.eventLines");
 		Elements eventLines = eventLinesGroup.select("div.eventLine");
 		for(Element eventLine : eventLines) {
-			GameSpreadDto currentGame = new GameSpreadDto();
+			GameBookValueDto currentGame = new GameBookValueDto();
 			Elements teamNames = eventLine.select("div.el-div.eventLine-team");
 			Elements teamNameSpans = teamNames.select("span.team-name");
 			String awayTeam = teamNameSpans.get(0).text();
@@ -60,29 +57,29 @@ public class DatePointSpreadsScraper {
 			
 			Elements opener = eventLine.select("div.el-div.eventLine-opener");
 			Elements openerValues = opener.select("div.eventLine-book-value");
-			String awaySpread = openerValues.get(0).text();
-			String homeSpread = openerValues.get(1).text();
-			Double currentSpread = getSpread(homeSpread, awaySpread);
+			String awayValue = openerValues.get(0).text();
+			String homeValue = openerValues.get(1).text();
+			BookValuesDto currentBookValues = valueScraper.getBookValues(homeValue, awayValue);
 			
-			if(currentSpread == null) {
-				Elements bookieSpreads = eventLine.select("div.el-div.eventLine-book");
-				for(Element spread : bookieSpreads) {
-					Elements bookieSpread = spread.select("div.eventLine-book-value");
-					awaySpread = bookieSpread.get(0).text();
-					homeSpread = bookieSpread.get(1).text();
-					currentSpread = getSpread(homeSpread, awaySpread);
-					if(currentSpread != null) {
+			if(currentBookValues == null) {
+				Elements bookieValues = eventLine.select("div.el-div.eventLine-book");
+				for(Element value : bookieValues) {
+					Elements bookieValue = value.select("div.eventLine-book-value");
+					awayValue = bookieValue.get(0).text();
+					homeValue = bookieValue.get(1).text();
+					currentBookValues = valueScraper.getBookValues(homeValue, awayValue);
+					if(currentBookValues != null) {
 						break;
 					}
 				}
 			}
 			
-			currentGame.setSpread(currentSpread);
-			gameSpreads.add(currentGame);
+			currentGame.setBookValues(currentBookValues);
+			result.add(currentGame);
 		}
 
-		logger.info("Finished spreads for date: " + strDate + ". " + gameSpreads.size() + " game spreads fetched");
-		return gameSpreads;
+		logger.info("Finished book values for date: " + strDate + ". " + result.size() + " game book values fetched");
+		return result;
 	}
 	
 	private String removeRankFromName(String teamName) {
@@ -91,53 +88,6 @@ public class DatePointSpreadsScraper {
 			int closingBracketInd = teamName.indexOf(")");
 			result = teamName.substring(closingBracketInd + 2);
 		}
-		return result;
-	}
-	
-	private Double getSpread(String homeSpread, String awaySpread) {
-		Double result = parseSpread(homeSpread);
-		if(result == null) {
-			result = parseSpread(awaySpread);
-			if(result != null) {
-				result *= -1;
-			}
-		}
-		
-		return result;
-	}
-	
-	private Double parseSpread(String spread) {
-		Double result = null;
-		if( !spread.equals("")) {
-			if(spread.startsWith("PK")) {
-				result = 0.0d;
-			} else if(spread.startsWith("+") || spread.startsWith("-")) {
-				int multiplier = 1;
-				if(spread.startsWith("-")) {
-					multiplier = -1;
-				}
-
-				int separatorIndex = spread.indexOf(spreadOddSeparator);
-				if(separatorIndex != -1) {
-					String extractedSpread = spread.substring(1, separatorIndex);
-					int halfIndex = extractedSpread.indexOf(HALF);
-					double halfAdd = 0.0d;
-					if(halfIndex != -1) {
-						extractedSpread = extractedSpread.substring(0, halfIndex);
-						halfAdd = 0.5d;
-					}
-					Double decimalPart;
-					try {
-						decimalPart = Double.valueOf(extractedSpread);
-					} catch(NumberFormatException e) {
-						throw new RuntimeException("Cannot parse spread: " + extractedSpread, e);
-					}
-					result = decimalPart + halfAdd;
-					result *= multiplier;
-				}
-			}
-		}
-		
 		return result;
 	}
 	

@@ -1,11 +1,6 @@
 package svm.predictor.stats.web;
 
 import java.io.Serializable;
-import java.util.List;
-
-import libsvm.svm;
-import libsvm.svm_model;
-import libsvm.svm_parameter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,14 +9,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import svm.predictor.distance.calculation.GamesDistanceSetter;
-import svm.predictor.libsvm.PredictionResultDto;
-import svm.predictor.libsvm.SvmPredictor;
-import svm.predictor.libsvm.SvmTrainer;
-import svm.predictor.libsvm.data.retrieving.SvmDataDto;
 import svm.predictor.libsvm.data.retrieving.SvmFileCreator;
-import svm.predictor.libsvm.data.scaling.DataScaler;
-import svm.predictor.libsvm.data.scaling.ScaleResultDto;
+import svm.predictor.spreads.scraper.MoneyLineOddsScraper;
+import svm.predictor.spreads.scraper.PointSpreadScraper;
 import svm.predictor.spreads.scraper.PointSpreadsSetter;
+import svm.predictor.spreads.scraper.PointTotalScraper;
 import svm.predictor.stats.aggregation.StatsAggregator;
 import svm.predictor.stats.scraper.SeasonGamesStatsScraper;
 import svm.predictor.teams.scraper.TeamsStadiumLocationsSetter;
@@ -70,9 +62,25 @@ public class StartWebBean implements Serializable {
 	
 	public void getSpreads() {
 		try {
-			pointSpreadsSetter.setAllGamesPointSpreads();
+			pointSpreadsSetter.setAllGamesBookValues(new PointSpreadScraper());
 		} catch(Exception e) {
 			logger.info("Exception while setting spreads", e);
+		}
+	}
+	
+	public void getPointTotals() {
+		try {
+			pointSpreadsSetter.setAllGamesBookValues(new PointTotalScraper());
+		} catch(Exception e) {
+			logger.info("Exception while setting point totals", e);
+		}
+	}
+	
+	public void getMoneyLineOdds() {
+		try {
+			pointSpreadsSetter.setAllGamesBookValues(new MoneyLineOddsScraper());
+		} catch(Exception e) {
+			logger.info("Exception while setting money lines", e);
 		}
 	}
 	
@@ -102,8 +110,8 @@ public class StartWebBean implements Serializable {
 	
 	public void createSVMFiles() {
 		try {
-			svmFileCreator.createSVMFile(2010, 2011, "cfb", null);
-			svmFileCreator.createSVMFile(2013, 2013, "cfb.t", null);
+			svmFileCreator.createSVMFile(2010, 2011, "cfb", 3);
+			svmFileCreator.createSVMFile(2013, 2013, "cfb.t", 3);
 		} catch(Exception e) {
 			logger.info("Exception while creating SVM files", e);
 		}

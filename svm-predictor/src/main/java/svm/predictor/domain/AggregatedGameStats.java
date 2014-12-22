@@ -24,6 +24,7 @@ public class AggregatedGameStats implements BaseEntity<Integer> {
 	
 	private BigDecimal homeWinPct;
 	private BigDecimal homeWinATSPct;
+	private BigDecimal homeUnderPct;
 	
 	private BigDecimal homeRushOffAttAvg;
 	private BigDecimal homeRushOffYardsAvg;
@@ -189,6 +190,7 @@ public class AggregatedGameStats implements BaseEntity<Integer> {
 	
 	private BigDecimal homeLast5WinPct;
 	private BigDecimal homeLast5WinATSPct;
+	private BigDecimal homeLast5UnderPct;
 	private BigDecimal homeLast5RushOffYardsAvg;
 	private BigDecimal homeLast5PassOffYardsAvg;
 	private BigDecimal homeLast5ScoringOffPointsAvg;
@@ -198,6 +200,7 @@ public class AggregatedGameStats implements BaseEntity<Integer> {
 	
 	private BigDecimal homeLastSeasonWinPct;
 	private BigDecimal homeLastSeasonWinATSPct;
+	private BigDecimal homeLastSeasonUnderPct;
 	private BigDecimal homeLastSeasonRushOffYardsAvg;
 	private BigDecimal homeLastSeasonPassOffYardsAvg;
 	private BigDecimal homeLastSeasonScoringOffPointsAvg;
@@ -209,6 +212,7 @@ public class AggregatedGameStats implements BaseEntity<Integer> {
 	
 	private BigDecimal awayWinPct;
 	private BigDecimal awayWinATSPct;
+	private BigDecimal awayUnderPct;
 	
 	private BigDecimal awayRushOffAttAvg;
 	private BigDecimal awayRushOffYardsAvg;
@@ -374,6 +378,7 @@ public class AggregatedGameStats implements BaseEntity<Integer> {
 	
 	private BigDecimal awayLast5WinPct;
 	private BigDecimal awayLast5WinATSPct;
+	private BigDecimal awayLast5UnderPct;
 	private BigDecimal awayLast5RushOffYardsAvg;
 	private BigDecimal awayLast5PassOffYardsAvg;
 	private BigDecimal awayLast5ScoringOffPointsAvg;
@@ -383,6 +388,7 @@ public class AggregatedGameStats implements BaseEntity<Integer> {
 	
 	private BigDecimal awayLastSeasonWinPct;
 	private BigDecimal awayLastSeasonWinATSPct;
+	private BigDecimal awayLastSeasonUnderPct;
 	private BigDecimal awayLastSeasonRushOffYardsAvg;
 	private BigDecimal awayLastSeasonPassOffYardsAvg;
 	private BigDecimal awayLastSeasonScoringOffPointsAvg;
@@ -2783,6 +2789,54 @@ public class AggregatedGameStats implements BaseEntity<Integer> {
 
 	public void setAwayWinATSPct(BigDecimal awayWinATSPct) {
 		this.awayWinATSPct = awayWinATSPct;
+	}
+
+	public BigDecimal getHomeUnderPct() {
+		return homeUnderPct;
+	}
+
+	public void setHomeUnderPct(BigDecimal homeUnderPct) {
+		this.homeUnderPct = homeUnderPct;
+	}
+
+	public BigDecimal getHomeLast5UnderPct() {
+		return homeLast5UnderPct;
+	}
+
+	public void setHomeLast5UnderPct(BigDecimal homeLast5UnderPct) {
+		this.homeLast5UnderPct = homeLast5UnderPct;
+	}
+
+	public BigDecimal getHomeLastSeasonUnderPct() {
+		return homeLastSeasonUnderPct;
+	}
+
+	public void setHomeLastSeasonUnderPct(BigDecimal homeLastSeasonUnderPct) {
+		this.homeLastSeasonUnderPct = homeLastSeasonUnderPct;
+	}
+
+	public BigDecimal getAwayUnderPct() {
+		return awayUnderPct;
+	}
+
+	public void setAwayUnderPct(BigDecimal awayUnderPct) {
+		this.awayUnderPct = awayUnderPct;
+	}
+
+	public BigDecimal getAwayLast5UnderPct() {
+		return awayLast5UnderPct;
+	}
+
+	public void setAwayLast5UnderPct(BigDecimal awayLast5UnderPct) {
+		this.awayLast5UnderPct = awayLast5UnderPct;
+	}
+
+	public BigDecimal getAwayLastSeasonUnderPct() {
+		return awayLastSeasonUnderPct;
+	}
+
+	public void setAwayLastSeasonUnderPct(BigDecimal awayLastSeasonUnderPct) {
+		this.awayLastSeasonUnderPct = awayLastSeasonUnderPct;
 	}
 
 }

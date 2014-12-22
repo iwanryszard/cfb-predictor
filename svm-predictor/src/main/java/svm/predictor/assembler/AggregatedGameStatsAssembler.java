@@ -185,6 +185,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		
 		homeTeamStats.setWinATSPct(entity.getHomeWinATSPct());
 		homeTeamStats.setWinPct(entity.getHomeWinPct());
+		homeTeamStats.setUnderPct(entity.getHomeUnderPct());
 		
 		
 		TeamAggregatedGameStatsDto awayTeamStats = new TeamAggregatedGameStatsDto();
@@ -345,6 +346,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		
 		awayTeamStats.setWinATSPct(entity.getAwayWinATSPct());
 		awayTeamStats.setWinPct(entity.getAwayWinPct());
+		awayTeamStats.setUnderPct(entity.getAwayUnderPct());
 		
 		TeamSimpleAggregatedStats homeLast5Games = new TeamSimpleAggregatedStats();
 		homeLast5Games.setPassDefYardsAvg(entity.getHomeLast5PassDefYardsAvg());
@@ -355,6 +357,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		homeLast5Games.setScoringOffPointsAvg(entity.getHomeLast5ScoringOffPointsAvg());
 		homeLast5Games.setWinATSPct(entity.getHomeLast5WinATSPct());
 		homeLast5Games.setWinPct(entity.getHomeLast5WinPct());
+		homeLast5Games.setUnderPct(entity.getHomeLast5UnderPct());
 		
 		TeamSimpleAggregatedStats awayLast5Games = new TeamSimpleAggregatedStats();
 		awayLast5Games.setPassDefYardsAvg(entity.getAwayLast5PassDefYardsAvg());
@@ -365,6 +368,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		awayLast5Games.setScoringOffPointsAvg(entity.getAwayLast5ScoringOffPointsAvg());
 		awayLast5Games.setWinATSPct(entity.getAwayLast5WinATSPct());
 		awayLast5Games.setWinPct(entity.getAwayLast5WinPct());
+		awayLast5Games.setUnderPct(entity.getAwayLast5UnderPct());
 		
 		TeamSimpleAggregatedStats homeLastSeasonGames = new TeamSimpleAggregatedStats();
 		homeLastSeasonGames.setPassDefYardsAvg(entity.getHomeLastSeasonPassDefYardsAvg());
@@ -375,6 +379,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		homeLastSeasonGames.setScoringOffPointsAvg(entity.getHomeLastSeasonScoringOffPointsAvg());
 		homeLastSeasonGames.setWinATSPct(entity.getHomeLastSeasonWinATSPct());
 		homeLastSeasonGames.setWinPct(entity.getHomeLastSeasonWinPct());
+		homeLastSeasonGames.setUnderPct(entity.getHomeLastSeasonUnderPct());
 		
 		TeamSimpleAggregatedStats awayLastSeasonGames = new TeamSimpleAggregatedStats();
 		awayLastSeasonGames.setPassDefYardsAvg(entity.getAwayLastSeasonPassDefYardsAvg());
@@ -385,6 +390,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		awayLastSeasonGames.setScoringOffPointsAvg(entity.getAwayLastSeasonScoringOffPointsAvg());
 		awayLastSeasonGames.setWinATSPct(entity.getAwayLastSeasonWinATSPct());
 		awayLastSeasonGames.setWinPct(entity.getAwayLastSeasonWinPct());
+		awayLastSeasonGames.setUnderPct(entity.getAwayLastSeasonUnderPct());
 		
 		dto.setHomeTeamStats(homeTeamStats);
 		dto.setAwayTeamStats(awayTeamStats);
@@ -557,6 +563,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		
 		entity.setHomeWinATSPct(homeTeamStats.getWinATSPct());
 		entity.setHomeWinPct(homeTeamStats.getWinPct());
+		entity.setHomeUnderPct(homeTeamStats.getUnderPct());
 		
 		TeamAggregatedGameStatsDto awayTeamStats = dto.getAwayTeamStats();
 		entity.setAwayDefRedZoneAttAvg(awayTeamStats.getDefRedZoneAttAvg());
@@ -716,6 +723,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		
 		entity.setAwayWinATSPct(awayTeamStats.getWinATSPct());
 		entity.setAwayWinPct(awayTeamStats.getWinPct());
+		entity.setAwayUnderPct(awayTeamStats.getUnderPct());
 		
 		TeamSimpleAggregatedStats homeLast5Games = dto.getHomeTeamLastFive();
 		entity.setHomeLast5PassDefYardsAvg(homeLast5Games.getPassDefYardsAvg());
@@ -726,6 +734,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		entity.setHomeLast5ScoringOffPointsAvg(homeLast5Games.getScoringOffPointsAvg());
 		entity.setHomeLast5WinATSPct(homeLast5Games.getWinATSPct());
 		entity.setHomeLast5WinPct(homeLast5Games.getWinPct());
+		entity.setHomeLast5UnderPct(homeLast5Games.getUnderPct());
 		
 		TeamSimpleAggregatedStats awayLast5Games = dto.getAwayTeamLastFive();
 		entity.setAwayLast5PassDefYardsAvg(awayLast5Games.getPassDefYardsAvg());
@@ -736,6 +745,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		entity.setAwayLast5ScoringOffPointsAvg(awayLast5Games.getScoringOffPointsAvg());
 		entity.setAwayLast5WinATSPct(awayLast5Games.getWinATSPct());
 		entity.setAwayLast5WinPct(awayLast5Games.getWinPct());
+		entity.setAwayLast5UnderPct(awayLast5Games.getUnderPct());
 		
 		TeamSimpleAggregatedStats homeLastSeasonGames = dto.getHomeTeamLastSeason();
 		entity.setHomeLastSeasonPassDefYardsAvg(homeLastSeasonGames.getPassDefYardsAvg());
@@ -746,6 +756,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		entity.setHomeLastSeasonScoringOffPointsAvg(homeLastSeasonGames.getScoringOffPointsAvg());
 		entity.setHomeLastSeasonWinATSPct(homeLastSeasonGames.getWinATSPct());
 		entity.setHomeLastSeasonWinPct(homeLastSeasonGames.getWinPct());
+		entity.setHomeLastSeasonUnderPct(homeLastSeasonGames.getUnderPct());
 		
 		TeamSimpleAggregatedStats awayLastSeasonGames = dto.getAwayTeamLastSeason();
 		entity.setAwayLastSeasonPassDefYardsAvg(awayLastSeasonGames.getPassDefYardsAvg());
@@ -756,6 +767,7 @@ public class AggregatedGameStatsAssembler extends BaseAssembler<AggregatedGameSt
 		entity.setAwayLastSeasonScoringOffPointsAvg(awayLastSeasonGames.getScoringOffPointsAvg());
 		entity.setAwayLastSeasonWinATSPct(awayLastSeasonGames.getWinATSPct());
 		entity.setAwayLastSeasonWinPct(awayLastSeasonGames.getWinPct());
+		entity.setAwayLastSeasonUnderPct(awayLastSeasonGames.getUnderPct());
 	}
 
 	public GameInfoAssembler getGameInfoAssembler() {

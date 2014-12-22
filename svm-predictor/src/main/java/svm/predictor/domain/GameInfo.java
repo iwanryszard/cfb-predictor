@@ -24,6 +24,9 @@ public class GameInfo implements BaseEntity<Integer> {
 	private int homeTeamPoints;
 	private int awayTeamPoints;
 	private Double pointSpread;
+	private Double pointTotal;
+	private Double homeStraightOdds;
+	private Double awayStraightOdds;
 	private int attendance;
 	
 	//home stats
@@ -307,6 +310,33 @@ public class GameInfo implements BaseEntity<Integer> {
 
 	public void setPointSpread(Double pointSpread) {
 		this.pointSpread = pointSpread;
+	}
+
+	@Column(name="point_total")
+	public Double getPointTotal() {
+		return pointTotal;
+	}
+
+	public void setPointTotal(Double pointTotal) {
+		this.pointTotal = pointTotal;
+	}
+
+	@Column(name="home_straight_odds")
+	public Double getHomeStraightOdds() {
+		return homeStraightOdds;
+	}
+
+	public void setHomeStraightOdds(Double homeStraightOdds) {
+		this.homeStraightOdds = homeStraightOdds;
+	}
+
+	@Column(name="away_straight_odds")
+	public Double getAwayStraightOdds() {
+		return awayStraightOdds;
+	}
+
+	public void setAwayStraightOdds(Double awayStraightOdds) {
+		this.awayStraightOdds = awayStraightOdds;
 	}
 
 	@Column(name="attendance")

@@ -20,7 +20,7 @@ public class SvmFileCreator {
 	private SvmDataRetriever svmDataRetriever;
 	
 	public void createSVMFile(int startSeason, int endSeason, String fileName, Integer minimumGamesPlayed) {
-		SvmDataDto svmData = svmDataRetriever.getGamesAsSvmData(startSeason, endSeason, minimumGamesPlayed);
+		SvmDataDto svmData = svmDataRetriever.getGamesAsSvmData(startSeason, endSeason, minimumGamesPlayed, new PointSpreadDataRetriever());
 		writeToFile(fileName, svmData.getLabels(), svmData.getFeatures());
 	}
 	

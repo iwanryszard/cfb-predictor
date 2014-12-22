@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.GameInfoDto;
-import svm.predictor.dto.GameSpreadDto;
 
 @Service("gameToPointSpreadMapper")
 public class GameToPointSpreadMapper {
@@ -40,34 +39,36 @@ public class GameToPointSpreadMapper {
 		nameOverrides.put("Southern Mississippi", Arrays.asList("Southern Miss"));
 	}
 	
-	public void setPointSpreads(List<GameInfoDto> games, List<GameSpreadDto> spreads, Map<Integer, String> teamMap) {
+	public void setBookValues(List<GameInfoDto> games, List<GameBookValueDto> bookValues, Map<Integer, String> teamMap, BookValueScraper bookValueScraper) {
 		for(GameInfoDto game : games) {
 			int awayTeamId = game.getAwayTeamId();
 			int homeTeamId = game.getHomeTeamId();
 			String homeTeam = teamMap.get(homeTeamId);
 			String awayTeam = teamMap.get(awayTeamId);
 			boolean neutralField = game.isNeutralVenue();
-			Double spread = getSpread(homeTeam, awayTeam, spreads, neutralField);
-			if(spread == null) {
-				logger.info("Spread not found for: " + awayTeam + " @ " + homeTeam);
+			BookValueMappingResult mapping = getBookValue(homeTeam, awayTeam, bookValues, neutralField);
+			if(mapping == null || mapping.bookValues == null) {
+				logger.info("Book values not found for: " + awayTeam + " @ " + homeTeam);
+			} else {
+				bookValueScraper.setBookValues(game, mapping.bookValues, mapping.foundReversed);
 			}
-			game.setPointSpread(spread);
 		}
 	}
 	
-	private Double getSpread(String homeTeam, String awayTeam, List<GameSpreadDto> spreads, boolean neutralField) {
-		Double result = null;
-		for(GameSpreadDto gameSpread : spreads) {
-			boolean found = checkMatch(homeTeam, awayTeam, gameSpread);
+	private BookValueMappingResult getBookValue(String homeTeam, String awayTeam, List<GameBookValueDto> bookValues, boolean neutralField) {
+		BookValueMappingResult result = null;
+		for(GameBookValueDto gameBookValue : bookValues) {
+			boolean found = checkMatch(homeTeam, awayTeam, gameBookValue);
 			boolean foundReversed = false;
 			if( !found && neutralField) {
-				foundReversed = checkMatch(awayTeam, homeTeam, gameSpread);
+				foundReversed = checkMatch(awayTeam, homeTeam, gameBookValue);
 			}
 			if(found || foundReversed) {
-				result = gameSpread.getSpread();
-				if(foundReversed && result != null) {
-					result *= -1;
-					logger.info("Found reversed for: " + awayTeam + " @ " + homeTeam + " spread: " + result);
+				result = new BookValueMappingResult();
+				result.bookValues = gameBookValue.getBookValues();
+				if(foundReversed) {
+					result.foundReversed = foundReversed;
+					logger.info("Found reversed for: " + awayTeam + " @ " + homeTeam + " bookValues: " + gameBookValue.getBookValues());
 				}
 				break;
 			}
@@ -75,24 +76,29 @@ public class GameToPointSpreadMapper {
 		return result;
 	}
 	
-	private boolean checkMatch(String homeTeam, String awayTeam, GameSpreadDto gameSpread) {
-		boolean gameMatched = teamMatches(homeTeam, gameSpread.getHomeTeam()) &&
-							  teamMatches(awayTeam, gameSpread.getAwayTeam()) &&
+	private boolean checkMatch(String homeTeam, String awayTeam, GameBookValueDto gameBookValue) {
+		boolean gameMatched = teamMatches(homeTeam, gameBookValue.getHomeTeam()) &&
+							  teamMatches(awayTeam, gameBookValue.getAwayTeam()) &&
 							  (awayTeam != null || homeTeam != null);
 		return gameMatched;
 	}
 	
-	private boolean teamMatches(String statsTeam, String spreadsTeam) {
-		boolean matches = statsTeam == null || statsTeam.equals(spreadsTeam);
+	private boolean teamMatches(String statsTeam, String booksTeam) {
+		boolean matches = statsTeam == null || statsTeam.equals(booksTeam);
 		if( !matches) {
 			List<String> overrides = nameOverrides.get(statsTeam);
 			if(overrides != null) {
-				matches = overrides.contains(spreadsTeam);
+				matches = overrides.contains(booksTeam);
 				if(matches) {
-					logger.info("Matched with override " + statsTeam + " to " + spreadsTeam);
+					logger.info("Matched with override " + statsTeam + " to " + booksTeam);
 				}
 			}
 		}
 		return matches;
+	}
+	
+	private static class BookValueMappingResult {
+		private BookValuesDto bookValues;
+		private boolean foundReversed;
 	}
 }

@@ -24,6 +24,9 @@ public class GameInfoAssembler extends BaseAssembler<GameInfoDto, GameInfo, Inte
 		dto.setHomeTeamId(entity.getHomeTeamId());
 		dto.setHomeTeamPoints(entity.getHomeTeamPoints());
 		dto.setPointSpread(entity.getPointSpread());
+		dto.setPointTotal(entity.getPointTotal());
+		dto.setHomeStraightOdds(entity.getHomeStraightOdds());
+		dto.setAwayStraightOdds(entity.getAwayStraightOdds());
 		dto.setGameDate(entity.getGameDate());
 		dto.setDistanceBetweenTeamsKm(entity.getDistanceBetweenTeamsKm());
 		dto.setNeutralVenue(entity.isNeutralVenue());
@@ -240,6 +243,9 @@ public class GameInfoAssembler extends BaseAssembler<GameInfoDto, GameInfo, Inte
 		entity.setHomeTeamId(dto.getHomeTeamId());
 		entity.setHomeTeamPoints(dto.getHomeTeamPoints());
 		entity.setPointSpread(dto.getPointSpread());
+		entity.setPointTotal(dto.getPointTotal());
+		entity.setHomeStraightOdds(dto.getHomeStraightOdds());
+		entity.setAwayStraightOdds(dto.getAwayStraightOdds());
 		entity.setGameDate(dto.getGameDate());
 		entity.setDistanceBetweenTeamsKm(dto.getDistanceBetweenTeamsKm());
 		entity.setNeutralVenue(dto.isNeutralVenue());
