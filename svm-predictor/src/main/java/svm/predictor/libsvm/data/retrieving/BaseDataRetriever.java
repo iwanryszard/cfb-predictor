@@ -21,7 +21,6 @@ public abstract class BaseDataRetriever {
 		features.add(stats.getRushOffYardsAvg());
 		features.add(stats.getScoringDefPointsAvg());
 		features.add(stats.getScoringOffPointsAvg());
-		features.add(stats.getWinATSPct());
 		features.add(stats.getWinPct());
 	}
 	
@@ -294,15 +293,19 @@ public abstract class BaseDataRetriever {
 		value = stats.getTurnoverMarginAvg();
 		features.add(value);
 		
-		value = stats.getWinATSPct();
-		features.add(value);
-		
 		value = stats.getWinPct();
 		features.add(value);
 	}
 	
 	public void addSpecificFeatures(AggregatedGameStatsDto aggregatedGame, List<Number> features) {
 		
-		
+	}
+	
+	public void addGameOdds(GameInfoDto game, List<GameOddsDto> gamesOdds) {
+		//default implementation for point spread and point total lines - standard odds are 1.91
+		GameOddsDto odds = new GameOddsDto();
+		odds.setAwayOdds(1.91);
+		odds.setHomeOdds(1.91);
+		gamesOdds.add(odds);
 	}
 }

@@ -36,6 +36,29 @@
  	<p:commandButton value="Predict" id="predictButton" 
          update="result" process="@this, testingStart, testingEnd, minimumGames" actionListener="#{predictionsWebBean.predict}" disabled="#{not predictionsWebBean.modelTrained}"/>
     <h:outputText id="testingSummary" value="#{predictionsWebBean.testingSummaryMsg}" />
+    <br/>
  	<h:outputText id="result" value="Result: #{predictionsWebBean.resultMessage}" style="font-weight:bold"/>
+ 	<p:panelGrid columns="2">
+ 		<h:outputText id="stake" value="Stake:"/>
+ 		<p:inputText id="stakeValue" value="#{predictionsWebBean.stakeValue}" />
+ 		<h:outputText id="totalStaked" value="Total Staked:"/>
+ 		<h:outputText id="totalStakedOutput" value="#{predictionsWebBean.totalStaked}">
+ 			<f:convertNumber pattern="#0.00" />
+ 		</h:outputText>
+ 		<h:outputText id="totalWon" value="Total Won:"/>
+ 		<h:outputText id="totalWonOutput" value="#{predictionsWebBean.totalWon}" >
+ 			<f:convertNumber pattern="#0.00" />
+ 		</h:outputText>
+ 		<h:outputText id="newWon" value="Net Won:"/>
+ 		<h:outputText id="netWonOutput" value="#{predictionsWebBean.netWon}" >
+ 			<f:convertNumber pattern="#0.00" />
+ 		</h:outputText>
+ 		<h:outputText id="roiPct" value="ROI%:"/>
+ 		<h:outputText id="roiPctOutput" value="#{predictionsWebBean.roiPct}" >
+ 			<f:convertNumber pattern="#0.00" />
+ 		</h:outputText>
+ 	</p:panelGrid>
+ 	<p:commandButton value="Compute" id="computeButton" 
+        actionListener="#{predictionsWebBean.computeStatsForStake}"/>
   </h:form>
 </html>

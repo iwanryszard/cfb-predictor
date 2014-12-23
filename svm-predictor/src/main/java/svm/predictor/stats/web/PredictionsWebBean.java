@@ -20,6 +20,7 @@ import svm.predictor.libsvm.PredictionResultDto;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;
 import svm.predictor.libsvm.data.retrieving.BaseDataRetriever;
+import svm.predictor.libsvm.data.retrieving.GameOddsDto;
 import svm.predictor.libsvm.data.retrieving.MoneyLineDataRetriever;
 import svm.predictor.libsvm.data.retrieving.PointSpreadDataRetriever;
 import svm.predictor.libsvm.data.retrieving.PointTotalDataRetriever;
@@ -52,6 +53,16 @@ public class PredictionsWebBean implements Serializable {
 	
 	private String trainingSummaryMsg;
 	private String testingSummaryMsg;
+	
+	private Double stakeValue;
+	private Double totalStaked;
+	private Double totalWon;
+	private Double netWon;
+	private Double roiPct;
+	
+	private List<Double> expectedResult;
+	private List<Double> predictions;
+	private List<GameOddsDto> gamesOdds;
 	
 	private svm_model model;
 	
@@ -95,8 +106,9 @@ public class PredictionsWebBean implements Serializable {
 				null, null, scaleRestoreDto);
 
 		PredictionResultDto predictionResult = svmPredictor.predict(scaledTestingData.getFeatures(), model, null);
-		List<Double> expectedResult = scaledTestingData.getLabels();
-		List<Double> predictions = predictionResult.getPredictions();
+		expectedResult = scaledTestingData.getLabels();
+		predictions = predictionResult.getPredictions();
+		gamesOdds = testingData.getGamesOdds();
 
 		int correct = 0;
 		int total = 0;
@@ -144,6 +156,25 @@ public class PredictionsWebBean implements Serializable {
 		}
 		
 		return result;
+	}
+	
+	public void computeStatsForStake() {
+		totalStaked = 0.0;
+		totalWon = 0.0;
+		netWon = 0.0;
+		roiPct = 0.0;
+		int gamesCount = predictions.size();
+		totalStaked = gamesCount * stakeValue;
+		for (int i = 0; i < predictions.size(); ++i) {
+			double v = predictions.get(i);
+			double target = expectedResult.get(i);
+			if (v == target) {
+				Double odds = v == 1 ? gamesOdds.get(i).getHomeOdds() : gamesOdds.get(i).getAwayOdds();
+				totalWon += stakeValue * odds;
+			}
+		}
+		netWon = totalWon - totalStaked;
+		roiPct = (totalWon / totalStaked) * 100;
 	}
 
 	public Integer getTrainingStartYear() {
@@ -232,6 +263,46 @@ public class PredictionsWebBean implements Serializable {
 
 	public void setTestingSummaryMsg(String testingSummaryMsg) {
 		this.testingSummaryMsg = testingSummaryMsg;
+	}
+
+	public Double getStakeValue() {
+		return stakeValue;
+	}
+
+	public void setStakeValue(Double stakeValue) {
+		this.stakeValue = stakeValue;
+	}
+
+	public Double getTotalStaked() {
+		return totalStaked;
+	}
+
+	public void setTotalStaked(Double totalStaked) {
+		this.totalStaked = totalStaked;
+	}
+
+	public Double getTotalWon() {
+		return totalWon;
+	}
+
+	public void setTotalWon(Double totalWon) {
+		this.totalWon = totalWon;
+	}
+
+	public Double getNetWon() {
+		return netWon;
+	}
+
+	public void setNetWon(Double netWon) {
+		this.netWon = netWon;
+	}
+
+	public Double getRoiPct() {
+		return roiPct;
+	}
+
+	public void setRoiPct(Double roiPct) {
+		this.roiPct = roiPct;
 	}
 
 }

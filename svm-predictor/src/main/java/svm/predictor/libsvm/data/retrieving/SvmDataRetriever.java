@@ -56,6 +56,7 @@ public class SvmDataRetriever {
 		
 		List<Integer> labels = new ArrayList<Integer>(aggregatedGames.size());
 		List<List<Number>> features = new ArrayList<List<Number>>(aggregatedGames.size());
+		List<GameOddsDto> gamesOdds = new ArrayList<GameOddsDto>();
 		for(AggregatedGameStatsDto aggregatedGame : aggregatedGames) {
 			GameInfoDto currentGame = aggregatedGame.getGame();
 			Integer currentLabel = dataRetriever.getLabel(currentGame);
@@ -63,7 +64,6 @@ public class SvmDataRetriever {
 			
 			List<Number> currentFeatures = new ArrayList<Number>();
 			currentFeatures.add(currentGame.getDistanceBetweenTeamsKm());
-			currentFeatures.add(currentGame.getPointSpread());
 			dataRetriever.addSpecificFeatures(aggregatedGame, currentFeatures);
 			
 			dataRetriever.addTeamAggregatedStats(aggregatedGame.getHomeTeamStats(), currentFeatures);
@@ -76,6 +76,8 @@ public class SvmDataRetriever {
 			
 			convertNullsToZeros(currentFeatures);
 			features.add(currentFeatures);
+			
+			dataRetriever.addGameOdds(currentGame, gamesOdds);
 		}
 		
 		logger.info("Labels size: {}", labels.size());
@@ -84,6 +86,7 @@ public class SvmDataRetriever {
 		SvmDataDto result = new SvmDataDto();
 		result.setLabels(labels);
 		result.setFeatures(features);
+		result.setGamesOdds(gamesOdds);
 		
 		return result;
 	}
