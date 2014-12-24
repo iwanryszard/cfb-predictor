@@ -1,4 +1,4 @@
-package svm.predictor.spreads.scraper;
+package svm.predictor.book.values.scraper;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.GameInfoDto;
 
-@Service("gameToPointSpreadMapper")
-public class GameToPointSpreadMapper {
+@Service("gameToBookValueMapper")
+public class GameToBookValueMapper {
 
-	private static Logger logger = LoggerFactory.getLogger(GameToPointSpreadMapper.class);
+	private static Logger logger = LoggerFactory.getLogger(GameToBookValueMapper.class);
 	
 	private Map<String, List<String>> nameOverrides;
 	
-	public GameToPointSpreadMapper() {	
+	public GameToBookValueMapper() {	
 		nameOverrides = new HashMap<String, List<String>>();
 		nameOverrides.put("SMU", Arrays.asList("Southern Methodist"));
 		nameOverrides.put("UCF", Arrays.asList("Central Florida"));

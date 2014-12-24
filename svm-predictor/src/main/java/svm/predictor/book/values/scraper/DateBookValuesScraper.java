@@ -1,4 +1,4 @@
-package svm.predictor.spreads.scraper;
+package svm.predictor.book.values.scraper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 
 import svm.predictor.service.impl.DocumentGetter;
 
-@Service("datePointSpreadsScraper")
-public class DatePointSpreadsScraper {
+@Service("dateBookValuesScraper")
+public class DateBookValuesScraper {
 
-	private static Logger logger = LoggerFactory.getLogger(DatePointSpreadsScraper.class);
+	private static Logger logger = LoggerFactory.getLogger(DateBookValuesScraper.class);
 	
 	@Value("${book.values.root.url}")
 	private String bookValuesRootURL;
@@ -41,7 +41,7 @@ public class DatePointSpreadsScraper {
 	
 	private DateFormat dateFormat;
 	
-	public DatePointSpreadsScraper() {
+	public DateBookValuesScraper() {
 		dateFormat = new SimpleDateFormat("yyyyMMdd");
 	}
 	

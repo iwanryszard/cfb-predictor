@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import svm.predictor.book.values.scraper.BookValuesSetter;
+import svm.predictor.book.values.scraper.MoneyLineOddsScraper;
+import svm.predictor.book.values.scraper.PointSpreadScraper;
+import svm.predictor.book.values.scraper.PointTotalScraper;
 import svm.predictor.distance.calculation.GamesDistanceSetter;
 import svm.predictor.libsvm.data.retrieving.SvmFileCreator;
-import svm.predictor.spreads.scraper.MoneyLineOddsScraper;
-import svm.predictor.spreads.scraper.PointSpreadScraper;
-import svm.predictor.spreads.scraper.PointSpreadsSetter;
-import svm.predictor.spreads.scraper.PointTotalScraper;
 import svm.predictor.stats.aggregation.StatsAggregator;
 import svm.predictor.stats.scraper.SeasonGamesStatsScraper;
 import svm.predictor.teams.scraper.TeamsStadiumLocationsSetter;
@@ -33,7 +33,7 @@ public class StartWebBean implements Serializable {
 	private SeasonGamesStatsScraper seasonGamesStatsScraper;
 	
 	@Autowired
-	private PointSpreadsSetter pointSpreadsSetter;
+	private BookValuesSetter pointSpreadsSetter;
 	
 	@Autowired
 	private TeamsStadiumLocationsSetter teamsStadiumLocationsSetter;

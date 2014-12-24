@@ -1,4 +1,4 @@
-package svm.predictor.spreads.scraper;
+package svm.predictor.book.values.scraper;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -15,10 +15,10 @@ import svm.predictor.service.GameInfoService;
 import svm.predictor.service.TeamService;
 import svm.predictor.service.impl.DocumentGetter;
 
-@Service("pointSpreadsSetter")
-public class PointSpreadsSetter {
+@Service("bookValuesSetter")
+public class BookValuesSetter {
 
-	private static Logger logger = LoggerFactory.getLogger(PointSpreadsSetter.class);
+	private static Logger logger = LoggerFactory.getLogger(BookValuesSetter.class);
 	
 	@Autowired
 	private GameInfoService gameInfoService;
@@ -27,10 +27,10 @@ public class PointSpreadsSetter {
 	private TeamService teamService;
 	
 	@Autowired
-	private DatePointSpreadsScraper datePointSpreadsScraper;
+	private DateBookValuesScraper dateBookValuesScraper;
 	
 	@Autowired
-	private GameToPointSpreadMapper gameToPointSpreadMapper;
+	private GameToBookValueMapper gameToBookValueMapper;
 	
 	@Autowired
 	private DocumentGetter documentGetter;
@@ -41,7 +41,7 @@ public class PointSpreadsSetter {
 		
 		for(Date gameDate : gameDates) {
 			logger.info("Setting book values for date: " + gameDate);
-			List<GameBookValueDto> bookValues = datePointSpreadsScraper.getBookValues(gameDate, bookValueScraper);
+			List<GameBookValueDto> bookValues = dateBookValuesScraper.getBookValues(gameDate, bookValueScraper);
 			logger.info("Fetched " + bookValues.size() + " book values");
 			if( !bookValues.isEmpty()) {
 				Map<String, Object> params = new HashMap<String, Object>();
@@ -49,7 +49,7 @@ public class PointSpreadsSetter {
 				List<GameInfoDto> games = gameInfoService.list(params, null);
 				logger.info("Found " + games.size() + " games");
 				
-				gameToPointSpreadMapper.setBookValues(games, bookValues, teamMap, bookValueScraper);
+				gameToBookValueMapper.setBookValues(games, bookValues, teamMap, bookValueScraper);
 			
 				gameInfoService.updateGameInfos(games);
 				logger.info("Book values persisted");

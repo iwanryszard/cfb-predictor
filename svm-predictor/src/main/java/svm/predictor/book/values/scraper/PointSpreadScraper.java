@@ -1,4 +1,4 @@
-package svm.predictor.spreads.scraper;
+package svm.predictor.book.values.scraper;
 
 import svm.predictor.dto.GameInfoDto;
 
