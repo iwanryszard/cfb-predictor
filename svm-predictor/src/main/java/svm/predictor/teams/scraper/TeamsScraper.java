@@ -7,15 +7,18 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import svm.predictor.constants.CFBStatsURLConts;
 import svm.predictor.service.impl.DocumentGetter;
 import svm.predictor.service.impl.TeamIdExtractor;
 
 @Service("teamsScraper")
 public class TeamsScraper {
 
+	@Value("${cfb.stats.root.url}")
+	private String cfbStatsRootURL;
+	
 	@Autowired
 	private DocumentGetter documentGetter;
 	
@@ -32,7 +35,7 @@ public class TeamsScraper {
 	}
 	
 	private Map<Integer, String> getTeamMap(int year) {
-		String url = CFBStatsURLConts.rootURL + year + "/team/index.html";
+		String url = cfbStatsRootURL + year + "/team/index.html";
 		Document doc = documentGetter.getDocument(url);
 
 		Elements conferences = doc.select("div.conference");

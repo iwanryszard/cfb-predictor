@@ -14,6 +14,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.service.impl.DocumentGetter;
@@ -23,7 +24,17 @@ public class DatePointSpreadsScraper {
 
 	private static Logger logger = LoggerFactory.getLogger(DatePointSpreadsScraper.class);
 	
-	private static String bookValuesBaseURL = "http://www.sportsbookreview.com/betting-odds/college-football";
+	@Value("${book.values.root.url}")
+	private String bookValuesRootURL;
+	
+	@Value("${book.values.sbrSession}")
+	private String sbrSession;
+	
+	@Value("${book.values.bbuserid}")
+	private String bbuserid;
+	
+	@Value("${book.values.bbpassword}")
+	private String bbpassword;
 	
 	@Autowired
 	private DocumentGetter documentGetter;
@@ -37,7 +48,7 @@ public class DatePointSpreadsScraper {
 	public List<GameBookValueDto> getBookValues(Date date, BookValueScraper valueScraper) {
 		String strDate = dateFormat.format(date);
 		logger.info("Getting book values for date: " + strDate);
-		String url = bookValuesBaseURL + valueScraper.getSpecificUrlPart() + "/?date=" + strDate;
+		String url = bookValuesRootURL + valueScraper.getSpecificUrlPart() + "/?date=" + strDate;
 		Map<String, String> cookies = buildCookies();
 		Document doc = documentGetter.getDocument(url, cookies);
 		
@@ -95,13 +106,13 @@ public class DatePointSpreadsScraper {
 		Map<String, String> cookies = new HashMap<String, String>();
 		cookies.put("NEWSIGNUP","true");
 		cookies.put("bb_lastvisit", "1411183220");
-		cookies.put("bb_password", "9650790fef5a5720c4e3314611d40877");
-		cookies.put("bb_userid", "813273");
-		cookies.put("bbpassword", "9650790fef5a5720c4e3314611d40877");
-		cookies.put("bbuserid", "813273");
+		cookies.put("bb_password", bbpassword);
+		cookies.put("bb_userid", bbuserid);
+		cookies.put("bbpassword", bbpassword);
+		cookies.put("bbuserid", bbuserid);
 		cookies.put("odds_option_GAME_STATUS_ORDER", "False");
 		cookies.put("odds_option_SHOW_PLAYBYPLAY", "True");
-		cookies.put("sbrSession", "iwanryszard");
+		cookies.put("sbrSession", sbrSession);
 		
 		return cookies;
 	}

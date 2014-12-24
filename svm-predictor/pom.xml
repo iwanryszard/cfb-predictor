@@ -21,6 +21,19 @@
     <jsf.version>2.2.8</jsf.version>
     <jackson.version>2.4.3</jackson.version>
   </properties>
+  
+  <profiles>
+    <profile>
+        <id>dev</id>
+        <!-- The development profile is active by default -->
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <properties>
+            <build.profile.id>dev</build.profile.id>
+        </properties>
+    </profile>
+  </profiles>
 
   <dependencies>
     <dependency>
@@ -198,6 +211,17 @@
   
   <build>
 	<finalName>SVM-Predictor</finalName>
+	
+	<filters>
+    	<filter>profiles/${build.profile.id}.properties</filter>
+	</filters>
+	
+	<resources>
+    	<resource>
+        	<filtering>true</filtering>
+        	<directory>src/main/resources</directory>
+    	</resource>
+	</resources>
  
 	<plugins>
 	   <plugin>

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -14,11 +15,13 @@ public class RestfulDistanceCalculator implements DistanceCalculator {
 
 	private static final Logger logger = LoggerFactory.getLogger(RestfulDistanceCalculator.class);
 	
-	private static final String distanceMatrixURL = "https://maps.googleapis.com/maps/api/distancematrix/json?";
-	
-	private static final String apiKey = "1234";
-	
 	private static final String statusOK = "OK";
+	
+	@Value("${distance.matrix.url}")
+	private String distanceMatrixURL;
+	
+	@Value("${google.api.key}")
+	private String apiKey;
 	
 	@Override
 	public List<Integer> calculateDistances(String origin, List<String> destinations) {

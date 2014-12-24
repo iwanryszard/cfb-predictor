@@ -15,8 +15,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
-import svm.predictor.constants.CFBStatsURLConts;
 import svm.predictor.dto.GameInfoDto;
 import svm.predictor.dto.TeamGameStatsDto;
 import svm.predictor.service.impl.DocumentGetter;
@@ -25,6 +25,9 @@ import svm.predictor.service.impl.TeamIdExtractor;
 public class TeamSeasonGamesStatsScraper {
 
 	private static Logger logger = LoggerFactory.getLogger(TeamSeasonGamesStatsScraper.class);
+	
+	@Value("${cfb.stats.root.url}")
+	private String cfbStatsRootURL;
 	
 	private int teamId;
 	private int year;
@@ -90,7 +93,7 @@ public class TeamSeasonGamesStatsScraper {
 	private List<GameInfoDto> getTeamSchedule(int teamId, int year) {
 		List<GameInfoDto> result = new ArrayList<GameInfoDto>();
 		
-		String url = CFBStatsURLConts.rootURL + year +"/team/" + teamId + "/index.html";
+		String url = cfbStatsRootURL + year +"/team/" + teamId + "/index.html";
 		Document doc = documentGetter.getDocument(url);
 		
 		Elements tableRows = doc.select("table.team-schedule > tbody > *");
@@ -206,7 +209,7 @@ public class TeamSeasonGamesStatsScraper {
 	
 	private String buildComponentGamelogURL(int teamId, int year, String component, String teamMarker) {
 		StringBuilder urlBuilder = new StringBuilder();
-		urlBuilder.append(CFBStatsURLConts.rootURL);
+		urlBuilder.append(cfbStatsRootURL);
 		urlBuilder.append(year);
 		urlBuilder.append("/team/" + teamId);
 		urlBuilder.append("/" + component);
