@@ -30,6 +30,7 @@ public class GameInfoAssembler extends BaseAssembler<GameInfoDto, GameInfo, Inte
 		dto.setGameDate(entity.getGameDate());
 		dto.setDistanceBetweenTeamsKm(entity.getDistanceBetweenTeamsKm());
 		dto.setNeutralVenue(entity.isNeutralVenue());
+		dto.setLeague(entity.getLeague());
 		
 		//away team stats;
 		TeamGameStatsDto awayTeamStats = new TeamGameStatsDto();
@@ -249,6 +250,7 @@ public class GameInfoAssembler extends BaseAssembler<GameInfoDto, GameInfo, Inte
 		entity.setGameDate(dto.getGameDate());
 		entity.setDistanceBetweenTeamsKm(dto.getDistanceBetweenTeamsKm());
 		entity.setNeutralVenue(dto.isNeutralVenue());
+		entity.setLeague(dto.getLeague());
 		
 		//away team stats;
 		TeamGameStatsDto awayTeamStats = dto.getAwayTeamStats();

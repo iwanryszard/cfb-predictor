@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.AggregatedGameStatsDto;
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 import svm.predictor.dto.TeamAggregatedGameStatsDto;
 import svm.predictor.dto.TeamSimpleAggregatedStats;
 import svm.predictor.service.AggregatedGameStatsService;
@@ -32,13 +33,13 @@ public class StatsAggregator {
 	@Autowired
 	private AggregatedGameStatsService aggregatedGameStatsService;
 	
-	public void aggregateGamesForSeasons(int startSeason, int endSeason) {
+	public void aggregateGamesForSeasons(int startSeason, int endSeason, League league) {
 		for(int season = startSeason; season <= endSeason; ++season) {
-			aggregateGamesForSeason(season);
+			aggregateGamesForSeason(season, league);
 		}
 	}
 	
-	private void aggregateGamesForSeason(int season) {
+	private void aggregateGamesForSeason(int season, League league) {
 		logger.info("Starting aggregation for season: {}", season);
 		
 		Date seasonStart = getSeasonStartDate(season);
@@ -53,6 +54,7 @@ public class StatsAggregator {
 		params.put("pointSpread:IS NOT", null);
 		params.put("gameDate:>", seasonStart);
 		params.put("gameDate:<", seasonEnd);
+		params.put("league", league);
 		
 		List<GameInfoDto> seasonGames = gameInfoService.list(params, null);
 		logger.info("Fetched {} games", seasonGames.size());
@@ -108,7 +110,7 @@ public class StatsAggregator {
 	}
 	
 	private Date getSeasonEndDate(int season) {
-		calendar.set(season + 1, Calendar.JANUARY, 20);
+		calendar.set(season + 1, Calendar.FEBRUARY, 20);
 		Date seasonEnd = calendar.getTime();
 		return seasonEnd;
 	}

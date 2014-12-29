@@ -48,7 +48,8 @@ public class DateBookValuesScraper {
 	public List<GameBookValueDto> getBookValues(Date date, BookValueScraper valueScraper) {
 		String strDate = dateFormat.format(date);
 		logger.info("Getting book values for date: " + strDate);
-		String url = bookValuesRootURL + valueScraper.getSpecificUrlPart() + "/?date=" + strDate;
+		String url = bookValuesRootURL + valueScraper.getSportUrlPart() + valueScraper.getSpecificUrlPart() + 
+				"/?date=" + strDate;
 		Map<String, String> cookies = buildCookies();
 		Document doc = documentGetter.getDocument(url, cookies);
 		

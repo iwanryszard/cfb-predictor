@@ -34,7 +34,7 @@ public class SvmDataRetriever {
 	}
 	
 	private Date getSeasonEndDate(int season) {
-		calendar.set(season + 1, Calendar.JANUARY, 20);
+		calendar.set(season + 1, Calendar.FEBRUARY, 20);
 		Date seasonEnd = calendar.getTime();
 		return seasonEnd;
 	}
@@ -46,6 +46,7 @@ public class SvmDataRetriever {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("game.gameDate:>", seasonStart);
 		params.put("game.gameDate:<", seasonEnd);
+		params.put("game.league", dataRetriever.getLeague());
 		if(minimumGamesPlayed != null) {
 			params.put("homeGamesPlayed:>=", BigInteger.valueOf(minimumGamesPlayed));
 			params.put("awayGamesPlayed:>=", BigInteger.valueOf(minimumGamesPlayed));

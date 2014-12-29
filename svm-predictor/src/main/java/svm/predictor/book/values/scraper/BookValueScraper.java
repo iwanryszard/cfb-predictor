@@ -1,11 +1,24 @@
 package svm.predictor.book.values.scraper;
 
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 
 public abstract class BookValueScraper {
 	
 	protected static String HALF = "½";
 	protected static String lineOddSeparator = Character.toString((char)160);
+	
+	protected String sportUrlPart;
+	protected League league;
+	
+	public BookValueScraper(League league) {
+		this.league = league;
+		if(league.equals(League.CFB)) {
+			this.sportUrlPart = "college-football";
+		} else if(league.equals(League.NFL)) {
+			this.sportUrlPart = "nfl-football";
+		}
+	}
 
 	public String getSpecificUrlPart() {
 		return "";
@@ -31,5 +44,21 @@ public abstract class BookValueScraper {
 		}
 		result = decimalPart + halfAdd;
 		return result;
+	}
+
+	public String getSportUrlPart() {
+		return sportUrlPart;
+	}
+
+	public void setSportUrlPart(String sportUrlPart) {
+		this.sportUrlPart = sportUrlPart;
+	}
+
+	public League getLeague() {
+		return league;
+	}
+
+	public void setLeague(League league) {
+		this.league = league;
 	}
 }

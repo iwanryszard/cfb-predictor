@@ -1,8 +1,13 @@
 package svm.predictor.book.values.scraper;
 
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 
 public class PointTotalScraper extends BookValueScraper {
+
+	public PointTotalScraper(League league) {
+		super(league);
+	}
 
 	@Override
 	public String getSpecificUrlPart() {

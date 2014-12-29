@@ -1,8 +1,13 @@
 package svm.predictor.book.values.scraper;
 
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 
 public class MoneyLineOddsScraper extends BookValueScraper {
+
+	public MoneyLineOddsScraper(League league) {
+		super(league);
+	}
 
 	@Override
 	public String getSpecificUrlPart() {

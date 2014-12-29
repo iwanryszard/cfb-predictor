@@ -4,17 +4,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml"   
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
       >
  
   <h:form> 
- 	<p:outputLabel value="#{startWebBean.startMessage}"></p:outputLabel>
- 	<p:commandButton value="Stats" id="statsButton" update="@form" actionListener="#{startWebBean.getStats}" disabled="true"/>
- 	<p:commandButton value="Spreads" id="spreadsButton" update="@form" actionListener="#{startWebBean.getSpreads}" disabled="true"/>
- 	<p:commandButton value="Point Totals" id="totalsButton" update="@form" actionListener="#{startWebBean.getPointTotals}" disabled="true"/>
- 	<p:commandButton value="Money Lines" id="moneyLinesButton" update="@form" actionListener="#{startWebBean.getMoneyLineOdds}" disabled="true"/>
- 	<p:commandButton value="Teams" id="teamsButton" update="@form" actionListener="#{startWebBean.getTeams}" disabled="true"/>
- 	<p:commandButton value="Distances" id="distancesButton" update="@form" actionListener="#{startWebBean.getDistances}" disabled="true"/>
- 	<p:commandButton value="AggregateStats" id="aggregateButton" update="@form" actionListener="#{startWebBean.aggregateGameStats}" disabled="true" />
+ 	<h:selectOneMenu id="leagues" value="#{startWebBean.leagueValue}">
+       <f:selectItem itemLabel="CFB" itemValue="0" />
+       <f:selectItem itemLabel="NFL" itemValue="1" />
+    </h:selectOneMenu>
+ 	<p:commandButton value="Stats" id="statsButton" update="@form" actionListener="#{startWebBean.getStats}"/>
+ 	<p:commandButton value="Spreads" id="spreadsButton" update="@form" actionListener="#{startWebBean.getSpreads}"/>
+ 	<p:commandButton value="Point Totals" id="totalsButton" update="@form" actionListener="#{startWebBean.getPointTotals}"/>
+ 	<p:commandButton value="Money Lines" id="moneyLinesButton" update="@form" actionListener="#{startWebBean.getMoneyLineOdds}"/>
+ 	<p:commandButton value="Teams" id="teamsButton" update="@form" actionListener="#{startWebBean.getTeams}"/>
+ 	<p:commandButton value="Distances" id="distancesButton" update="@form" actionListener="#{startWebBean.getDistances}"/>
+ 	<p:commandButton value="AggregateStats" id="aggregateButton" update="@form" actionListener="#{startWebBean.aggregateGameStats}"/>
   	<p:commandButton value="createSVMFiles" id="createFilesButton" update="@form" actionListener="#{startWebBean.createSVMFiles}" />
   </h:form>
 </html>

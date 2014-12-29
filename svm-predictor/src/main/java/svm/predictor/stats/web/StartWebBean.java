@@ -13,7 +13,10 @@ import svm.predictor.book.values.scraper.MoneyLineOddsScraper;
 import svm.predictor.book.values.scraper.PointSpreadScraper;
 import svm.predictor.book.values.scraper.PointTotalScraper;
 import svm.predictor.distance.calculation.GamesDistanceSetter;
+import svm.predictor.dto.League;
 import svm.predictor.libsvm.data.retrieving.SvmFileCreator;
+import svm.predictor.nfl.stats.scraper.NflStatsScraper;
+import svm.predictor.nfl.teams.NflTeamsCreator;
 import svm.predictor.stats.aggregation.StatsAggregator;
 import svm.predictor.stats.scraper.SeasonGamesStatsScraper;
 import svm.predictor.teams.scraper.TeamsStadiumLocationsSetter;
@@ -47,14 +50,22 @@ public class StartWebBean implements Serializable {
 	@Autowired
 	private SvmFileCreator svmFileCreator;
 	
-	public String getStartMessage() {
-		logger.info("getStartMessage called...");
-		return "Current time in millis: " + System.currentTimeMillis();
-	}
+	@Autowired
+	private NflTeamsCreator nflTeamsCreator;
+	
+	@Autowired
+	private NflStatsScraper nflStatsScraper;
+	
+	private int leagueValue;
 	
 	public void getStats() {
 		try {
-			seasonGamesStatsScraper.createAllSeasonStats();
+			League league = getLeague();
+			if(league.equals(League.CFB)) {
+				seasonGamesStatsScraper.createAllSeasonStats();
+			} else if(league.equals(League.NFL)) {
+				nflStatsScraper.createAllSeasonStats();
+			}
 		} catch(Exception e) {
 			logger.info("Exception while getting game stats", e);
 		}
@@ -62,7 +73,8 @@ public class StartWebBean implements Serializable {
 	
 	public void getSpreads() {
 		try {
-			pointSpreadsSetter.setAllGamesBookValues(new PointSpreadScraper());
+			League league = getLeague();
+			pointSpreadsSetter.setAllGamesBookValues(new PointSpreadScraper(league));
 		} catch(Exception e) {
 			logger.info("Exception while setting spreads", e);
 		}
@@ -70,7 +82,8 @@ public class StartWebBean implements Serializable {
 	
 	public void getPointTotals() {
 		try {
-			pointSpreadsSetter.setAllGamesBookValues(new PointTotalScraper());
+			League league = getLeague();
+			pointSpreadsSetter.setAllGamesBookValues(new PointTotalScraper(league));
 		} catch(Exception e) {
 			logger.info("Exception while setting point totals", e);
 		}
@@ -78,7 +91,8 @@ public class StartWebBean implements Serializable {
 	
 	public void getMoneyLineOdds() {
 		try {
-			pointSpreadsSetter.setAllGamesBookValues(new MoneyLineOddsScraper());
+			League league = getLeague();
+			pointSpreadsSetter.setAllGamesBookValues(new MoneyLineOddsScraper(league));
 		} catch(Exception e) {
 			logger.info("Exception while setting money lines", e);
 		}
@@ -86,7 +100,12 @@ public class StartWebBean implements Serializable {
 	
 	public void getTeams() {
 		try {
-			teamsStadiumLocationsSetter.createAllTeams();
+			League league = getLeague();
+			if(league.equals(League.CFB)) {
+				teamsStadiumLocationsSetter.createAllTeams();
+			} else if(league.equals(League.NFL)) {
+				nflTeamsCreator.createAllNflTeams();
+			}
 		} catch(Exception e) {
 			logger.info("Exception while getting teams", e);
 		}
@@ -94,7 +113,8 @@ public class StartWebBean implements Serializable {
 	
 	public void getDistances() {
 		try {
-			gamesDistanceSetter.setAllGamesDistances();
+			League league = getLeague();
+			gamesDistanceSetter.setAllGamesDistances(league);
 		} catch(Exception e) {
 			logger.info("Exception while setting distances", e);
 		}
@@ -102,7 +122,8 @@ public class StartWebBean implements Serializable {
 	
 	public void aggregateGameStats() {
 		try {
-			statsAggregator.aggregateGamesForSeasons(2010, 2013);
+			League league = getLeague();
+			statsAggregator.aggregateGamesForSeasons(2010, 2013, league);
 		} catch(Exception e) {
 			logger.info("Exception while aggregating stats", e);
 		}
@@ -114,6 +135,22 @@ public class StartWebBean implements Serializable {
 			svmFileCreator.createSVMFile(2013, 2013, "cfb.t", 3);
 		} catch(Exception e) {
 			logger.info("Exception while creating SVM files", e);
+		}
+	}
+
+	public int getLeagueValue() {
+		return leagueValue;
+	}
+
+	public void setLeagueValue(int leagueValue) {
+		this.leagueValue = leagueValue;
+	}
+	
+	private League getLeague() {
+		if(leagueValue == 0) {
+			return League.CFB;
+		} else {
+			return League.NFL;
 		}
 	}
 }

@@ -16,14 +16,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import svm.predictor.dto.League;
 import svm.predictor.libsvm.PredictionResultDto;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;
 import svm.predictor.libsvm.data.retrieving.BaseDataRetriever;
+import svm.predictor.libsvm.data.retrieving.CfbSupportedFeaturesProvider;
 import svm.predictor.libsvm.data.retrieving.GameOddsDto;
 import svm.predictor.libsvm.data.retrieving.MoneyLineDataRetriever;
+import svm.predictor.libsvm.data.retrieving.NflSupportedFeaturesProvider;
 import svm.predictor.libsvm.data.retrieving.PointSpreadDataRetriever;
 import svm.predictor.libsvm.data.retrieving.PointTotalDataRetriever;
+import svm.predictor.libsvm.data.retrieving.SupportedFeaturesProvider;
 import svm.predictor.libsvm.data.retrieving.SvmDataDto;
 import svm.predictor.libsvm.data.retrieving.SvmDataRetriever;
 import svm.predictor.libsvm.data.scaling.DataScaler;
@@ -85,6 +89,8 @@ public class PredictionsWebBean implements Serializable {
 	
 	@Autowired
 	private SvmDataRetriever svmDataRetriever;
+
+	private int leagueValue;
 	
 	public void trainModel() {
 		modelTrained = false;
@@ -145,14 +151,15 @@ public class PredictionsWebBean implements Serializable {
 	
 	private BaseDataRetriever getDataRetriever() {
 		BaseDataRetriever result = null;
+		SupportedFeaturesProvider featureProvider = getSupportedFeaturesProvider();
 		if(selectedPredictionType.equals("Point Spread")) {
-			result = new PointSpreadDataRetriever();
+			result = new PointSpreadDataRetriever(featureProvider);
 		} else if(selectedPredictionType.equals("Point Total")) {
-			result = new PointTotalDataRetriever();
+			result = new PointTotalDataRetriever(featureProvider);
 		} else if(selectedPredictionType.equals("Money Line")) {
-			result = new MoneyLineDataRetriever();
+			result = new MoneyLineDataRetriever(featureProvider);
 		} else {
-			result = new PointSpreadDataRetriever();
+			result = new PointSpreadDataRetriever(featureProvider);
 		}
 		
 		return result;
@@ -303,6 +310,22 @@ public class PredictionsWebBean implements Serializable {
 
 	public void setRoiPct(Double roiPct) {
 		this.roiPct = roiPct;
+	}
+	
+	public int getLeagueValue() {
+		return leagueValue;
+	}
+
+	public void setLeagueValue(int leagueValue) {
+		this.leagueValue = leagueValue;
+	}
+	
+	private SupportedFeaturesProvider getSupportedFeaturesProvider() {
+		if(leagueValue == 0) {
+			return new CfbSupportedFeaturesProvider();
+		} else {
+			return new NflSupportedFeaturesProvider();
+		}
 	}
 
 }

@@ -20,13 +20,6 @@ public class TeamIdExtractor {
 		if( !opponentLink.isEmpty()) {
 			link = opponentLink.attr("abs:href");
 		}
-		if("".equals(link)) {
-			return -1;
-		}
-		
-		int beginInd = link.indexOf("team/");
-		int endInd = link.indexOf("/index");
-		String strId = link.substring(beginInd + 5, endInd);
-		return Integer.valueOf(strId);
+		return extractTeamId(link);
 	}
 }

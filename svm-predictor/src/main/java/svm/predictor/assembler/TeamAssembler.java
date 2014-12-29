@@ -19,12 +19,14 @@ public class TeamAssembler extends BaseAssembler<TeamDto, Team, Integer> {
 	protected void doConvertToDto(Team entity, TeamDto dto) {
 		dto.setName(entity.getName());
 		dto.setStadiumLocation(entity.getStadiumLocation());
+		dto.setLeague(entity.getLeague());
 	}
 
 	@Override
 	protected void doConvertToEntity(TeamDto dto, Team entity) {
 		entity.setName(dto.getName());
 		entity.setStadiumLocation(dto.getStadiumLocation());
+		entity.setLeague(dto.getLeague());
 	}
 
 }

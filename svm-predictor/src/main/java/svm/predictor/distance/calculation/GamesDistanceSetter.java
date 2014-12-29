@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.CalculatedDistanceDto;
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 import svm.predictor.service.CalculatedDistanceService;
 import svm.predictor.service.GameInfoService;
 import svm.predictor.service.TeamService;
@@ -37,13 +38,13 @@ public class GamesDistanceSetter {
 	
 	private Map<Integer, Integer> teamIdToOrderIndex;
 	
-	public void setAllGamesDistances() {
-		Map<Integer, String> teamLocationsMap = teamService.getTeamLocationsMap();
+	public void setAllGamesDistances(League league) {
+		Map<Integer, String> teamLocationsMap = teamService.getTeamLocationsMap(league);
 		int numberOfTeams = teamLocationsMap.size();
 		teamIdToOrderIndex = getTeamIdToOrderMap(teamLocationsMap);
 		
 		Integer[][] calculatedDistances = new Integer[numberOfTeams][numberOfTeams];
-		List<CalculatedDistanceDto> calculated = calculatedDistanceService.list();
+		List<CalculatedDistanceDto> calculated = calculatedDistanceService.getCalculatedDistances(league);
 		populateCalculatedDistances(calculatedDistances, calculated);
 		
 		Map<String, Object> params = new HashMap<String, Object>();

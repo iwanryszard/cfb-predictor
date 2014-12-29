@@ -2,8 +2,12 @@ package svm.predictor.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import svm.predictor.dto.League;
 
 @Entity
 @Table(name="team")
@@ -12,6 +16,7 @@ public class Team implements BaseEntity<Integer> {
 	private Integer id;
 	private String name;
 	private String stadiumLocation;
+	private League league;
 	
 	@Override
 	@Id
@@ -41,6 +46,16 @@ public class Team implements BaseEntity<Integer> {
 
 	public void setStadiumLocation(String stadiumLocation) {
 		this.stadiumLocation = stadiumLocation;
+	}
+
+	@Column(name="league")
+	@Enumerated(EnumType.ORDINAL)
+	public League getLeague() {
+		return league;
+	}
+
+	public void setLeague(League league) {
+		this.league = league;
 	}
 
 }

@@ -9,6 +9,7 @@ import org.hibernate.transform.Transformers;
 
 import svm.predictor.dao.GameInfoDao;
 import svm.predictor.domain.GameInfo;
+import svm.predictor.dto.League;
 import svm.predictor.dto.TeamAggregatedGameStatsDto;
 import svm.predictor.dto.TeamSimpleAggregatedStats;
 
@@ -16,9 +17,11 @@ public class GameInfoDaoImpl extends BaseDao<GameInfo, Integer> implements GameI
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Date> getAllGameDates() {
+	public List<Date> getAllGameDates(League league) {
 		Session session = getSessionFactory().getCurrentSession();
-		List<Date> result = session.createQuery("select distinct g.gameDate from GameInfo g order by g.gameDate").list();
+		Query query = session.createQuery("select distinct g.gameDate from GameInfo g where g.league = :league order by g.gameDate");
+		query.setParameter("league", league);
+		List<Date> result = query.list();
 		return result;
 	}
 

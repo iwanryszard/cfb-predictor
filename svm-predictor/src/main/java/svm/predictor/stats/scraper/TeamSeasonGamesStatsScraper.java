@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 import svm.predictor.dto.TeamGameStatsDto;
 import svm.predictor.service.impl.DocumentGetter;
 import svm.predictor.service.impl.TeamIdExtractor;
@@ -113,12 +114,14 @@ public class TeamSeasonGamesStatsScraper {
 			defenseOpponentToDateMap.put(opponentId, dateStr);
 			if( !seasonProcessedGamesHolder.isGameProcessed(teamId, opponentId, dateStr)) {
 				currentGame = new GameInfoDto();
+				currentGame.setLeague(League.CFB);
 			
 				Date gameDate = null;
 				try {
 					gameDate = formatter.parse(dateStr);
 				} catch (ParseException e) {
 					logger.error("Error parsing game date", e);
+					throw new RuntimeException("Error parsing game date");
 				}
 				currentGame.setGameDate(gameDate);
 			

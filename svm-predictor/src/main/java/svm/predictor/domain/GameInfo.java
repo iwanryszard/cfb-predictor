@@ -4,10 +4,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import svm.predictor.dto.League;
  
 
 @Entity
@@ -28,6 +32,7 @@ public class GameInfo implements BaseEntity<Integer> {
 	private Double homeStraightOdds;
 	private Double awayStraightOdds;
 	private int attendance;
+	private League league;
 	
 	//home stats
 	private int homeRushOffAtt;
@@ -1752,6 +1757,16 @@ public class GameInfo implements BaseEntity<Integer> {
 
 	public void setAwayTurnoverMargin(Integer awayTurnoverMargin) {
 		this.awayTurnoverMargin = awayTurnoverMargin;
+	}
+
+	@Column(name = "league")
+	@Enumerated(EnumType.ORDINAL)
+	public League getLeague() {
+		return league;
+	}
+
+	public void setLeague(League league) {
+		this.league = league;
 	}
  
 }

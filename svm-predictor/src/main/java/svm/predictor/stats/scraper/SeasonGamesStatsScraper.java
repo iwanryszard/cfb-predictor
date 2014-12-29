@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 import svm.predictor.service.GameInfoService;
 import svm.predictor.service.TeamService;
 import svm.predictor.service.impl.DocumentGetter;
@@ -34,7 +35,7 @@ public class SeasonGamesStatsScraper {
 		int startYear = 2008;
 		int endYear = 2013;
 		
-		Map<Integer, String> teamMap = teamService.getTeamNamesMap();
+		Map<Integer, String> teamMap = teamService.getTeamNamesMap(League.CFB);
 		
 		for(int year = startYear; year <= endYear; ++year) {
 			logger.info("Starting with games for year: " + year);

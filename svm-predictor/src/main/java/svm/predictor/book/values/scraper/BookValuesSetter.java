@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 import svm.predictor.service.GameInfoService;
 import svm.predictor.service.TeamService;
 import svm.predictor.service.impl.DocumentGetter;
@@ -36,8 +37,9 @@ public class BookValuesSetter {
 	private DocumentGetter documentGetter;
 	
 	public void setAllGamesBookValues(BookValueScraper bookValueScraper) {
-		List<Date> gameDates = gameInfoService.getAllGameDates();
-		Map<Integer, String> teamMap = teamService.getTeamNamesMap();
+		League league = bookValueScraper.getLeague();
+		List<Date> gameDates = gameInfoService.getAllGameDates(league);
+		Map<Integer, String> teamMap = teamService.getTeamNamesMap(league);
 		
 		for(Date gameDate : gameDates) {
 			logger.info("Setting book values for date: " + gameDate);
@@ -46,6 +48,7 @@ public class BookValuesSetter {
 			if( !bookValues.isEmpty()) {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("gameDate", gameDate);
+				params.put("league", league);
 				List<GameInfoDto> games = gameInfoService.list(params, null);
 				logger.info("Found " + games.size() + " games");
 				

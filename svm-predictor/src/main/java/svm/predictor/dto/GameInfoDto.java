@@ -16,6 +16,7 @@ public class GameInfoDto extends BaseDto<Integer>{
 	private Double homeStraightOdds;
 	private Double awayStraightOdds;
 	private int attendance;
+	private League league;
 	
 	private TeamGameStatsDto homeTeamStats;
 	private TeamGameStatsDto awayTeamStats;
@@ -103,6 +104,12 @@ public class GameInfoDto extends BaseDto<Integer>{
 	}
 	public void setAwayTeamStats(TeamGameStatsDto awayTeamStats) {
 		this.awayTeamStats = awayTeamStats;
+	}
+	public League getLeague() {
+		return league;
+	}
+	public void setLeague(League league) {
+		this.league = league;
 	}
 	
 }

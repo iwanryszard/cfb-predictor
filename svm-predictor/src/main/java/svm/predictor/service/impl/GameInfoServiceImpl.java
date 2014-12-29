@@ -6,6 +6,7 @@ import java.util.List;
 import svm.predictor.dao.GameInfoDao;
 import svm.predictor.domain.GameInfo;
 import svm.predictor.dto.GameInfoDto;
+import svm.predictor.dto.League;
 import svm.predictor.dto.TeamAggregatedGameStatsDto;
 import svm.predictor.dto.TeamSimpleAggregatedStats;
 import svm.predictor.service.GameInfoService;
@@ -27,8 +28,8 @@ public class GameInfoServiceImpl extends BaseService<GameInfoDto, GameInfoDao, G
 	}
 
 	@Override
-	public List<Date> getAllGameDates() {
-		return getDao().getAllGameDates();
+	public List<Date> getAllGameDates(League league) {
+		return getDao().getAllGameDates(league);
 	}
 
 	@Override

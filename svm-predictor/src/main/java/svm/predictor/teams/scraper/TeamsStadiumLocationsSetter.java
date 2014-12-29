@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import svm.predictor.dto.League;
 import svm.predictor.dto.TeamDto;
 import svm.predictor.service.TeamService;
 
@@ -50,12 +51,13 @@ public class TeamsStadiumLocationsSetter {
 				team.setId(teamId);
 				team.setName(teamEntry.getValue());
 				team.setStadiumLocation(stadiumLocation);
+				team.setLeague(League.CFB);
 				teams.add(team);
 			}
 			 
 		}
 		
 		teamService.createTeams(teams);
-		logger.info("Persisted teams");
+		logger.info("Persisted CFB teams");
 	}
 }

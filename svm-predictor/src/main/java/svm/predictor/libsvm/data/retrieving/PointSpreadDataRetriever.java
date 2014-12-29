@@ -11,6 +11,10 @@ import svm.predictor.dto.TeamSimpleAggregatedStats;
 
 public class PointSpreadDataRetriever extends BaseDataRetriever {
 
+	public PointSpreadDataRetriever(SupportedFeaturesProvider supportedFeaturesProvider) {
+		super(supportedFeaturesProvider);
+	}
+	
 	@Override
 	public Map<String, String> getSpecificParams() {
 		Map<String, String> params = new HashMap<String, String>();

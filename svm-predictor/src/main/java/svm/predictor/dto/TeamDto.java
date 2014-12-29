@@ -4,6 +4,7 @@ public class TeamDto extends BaseDto<Integer> {
 
 	private String name;
 	private String stadiumLocation;
+	private League league;
 	
 	public String getName() {
 		return name;
@@ -19,5 +20,13 @@ public class TeamDto extends BaseDto<Integer> {
 	
 	public void setStadiumLocation(String stadiumLocation) {
 		this.stadiumLocation = stadiumLocation;
+	}
+
+	public League getLeague() {
+		return league;
+	}
+
+	public void setLeague(League league) {
+		this.league = league;
 	}
 }
