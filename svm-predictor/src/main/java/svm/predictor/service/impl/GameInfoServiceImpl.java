@@ -28,8 +28,8 @@ public class GameInfoServiceImpl extends BaseService<GameInfoDto, GameInfoDao, G
 	}
 
 	@Override
-	public List<Date> getAllGameDates(League league) {
-		return getDao().getAllGameDates(league);
+	public List<Date> getAllGameDates(League league, Date startDate) {
+		return getDao().getAllGameDates(league, startDate);
 	}
 
 	@Override

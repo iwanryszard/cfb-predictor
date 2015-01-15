@@ -1,5 +1,6 @@
 package svm.predictor.book.values.scraper;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,11 @@ public class BookValuesSetter {
 	
 	public void setAllGamesBookValues(BookValueScraper bookValueScraper) {
 		League league = bookValueScraper.getLeague();
-		List<Date> gameDates = gameInfoService.getAllGameDates(league);
+		//TODO this is temporary hack to get the games for the 2014 season
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2014, Calendar.AUGUST, 15);
+		Date startDate = calendar.getTime();
+		List<Date> gameDates = gameInfoService.getAllGameDates(league, startDate);
 		Map<Integer, String> teamMap = teamService.getTeamNamesMap(league);
 		
 		for(Date gameDate : gameDates) {

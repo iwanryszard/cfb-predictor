@@ -15,7 +15,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import svm.predictor.dto.GameInfoDto;
 import svm.predictor.dto.League;
@@ -27,7 +26,6 @@ public class TeamSeasonGamesStatsScraper {
 
 	private static Logger logger = LoggerFactory.getLogger(TeamSeasonGamesStatsScraper.class);
 	
-	@Value("${cfb.stats.root.url}")
 	private String cfbStatsRootURL;
 	
 	private int teamId;
@@ -42,12 +40,13 @@ public class TeamSeasonGamesStatsScraper {
 	private TeamIdExtractor teamIdExtractor = new TeamIdExtractor();
 	
 	public TeamSeasonGamesStatsScraper(int teamId, int year, ComponentStatsSettersHolder componentStatsSettersHolder, SeasonProcessedGamesHolder seasonProcessedGamesHolder,
-			DocumentGetter documentGetter) {
+			DocumentGetter documentGetter, String cfbStatsRootURL) {
 		this.teamId = teamId;
 		this.year = year;
 		this.componentStatsSettersHolder = componentStatsSettersHolder;
 		this.seasonProcessedGamesHolder = seasonProcessedGamesHolder;
 		this.documentGetter = documentGetter;
+		this.cfbStatsRootURL = cfbStatsRootURL;
 		teamStats = new ArrayList<TeamGameStatsDto>();
 		opponentsStats = new ArrayList<TeamGameStatsDto>();
 		defenseOpponentToDateMap = new LinkedHashMap<Integer, String>();

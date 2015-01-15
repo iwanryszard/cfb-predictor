@@ -34,26 +34,26 @@ public class NflSupportedFeaturesProvider implements SupportedFeaturesProvider {
 		value = stats.getFGOffPct();
 		features.add(value);
 		
-//		value = stats.getFirstDownDefPassAvg();
-//		features.add(value);
-//		
-//		value = stats.getFirstDownDefPenaltyAvg();
-//		features.add(value);
-//		
-//		value = stats.getFirstDownDefRushAvg();
-//		features.add(value);
+		value = stats.getFirstDownDefPassAvg();
+		features.add(value);
+		
+		value = stats.getFirstDownDefPenaltyAvg();
+		features.add(value);
+		
+		value = stats.getFirstDownDefRushAvg();
+		features.add(value);
 		
 		value = stats.getFirstDownDefTotalAvg();
 		features.add(value);
 		
-//		value = stats.getFirstDownOffPassAvg();
-//		features.add(value);
-//		
-//		value = stats.getFirstDownOffPenaltyAvg();
-//		features.add(value);
-//		
-//		value = stats.getFirstDownOffRushAvg();
-//		features.add(value);
+		value = stats.getFirstDownOffPassAvg();
+		features.add(value);
+		
+		value = stats.getFirstDownOffPenaltyAvg();
+		features.add(value);
+		
+		value = stats.getFirstDownOffRushAvg();
+		features.add(value);
 		
 		value = stats.getFirstDownOffTotalAvg();
 		features.add(value);

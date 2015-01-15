@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import svm.predictor.dto.League;
 import svm.predictor.libsvm.PredictionResultDto;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;

@@ -12,7 +12,7 @@ public interface GameInfoService extends Service<GameInfoDto, Integer> {
 
 	void createGameInfos(List<GameInfoDto> games);
 	void updateGameInfos(List<GameInfoDto> games);
-	List<Date> getAllGameDates(League league);
+	List<Date> getAllGameDates(League league, Date startDate);
 	TeamAggregatedGameStatsDto getTeamAggregatedStats(Integer teamId, Date seasonStart, Date currentGame);
 	TeamSimpleAggregatedStats getPreviousNGamesStats(Integer teamId, Integer gameNumberLimit, Date currentGame);
 	TeamSimpleAggregatedStats getSimpleSeasonStats(Integer teamId, Date seasonStart, Date seasonEnd);

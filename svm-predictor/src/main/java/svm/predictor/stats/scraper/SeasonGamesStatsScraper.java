@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.dto.GameInfoDto;
@@ -31,9 +32,12 @@ public class SeasonGamesStatsScraper {
 	@Autowired
 	private ComponentStatsSettersHolder componentStatsSettersHolder;
 	
+	@Value("${cfb.stats.root.url}")
+	private String cfbStatsRootURL;
+	
 	public void createAllSeasonStats() {
-		int startYear = 2008;
-		int endYear = 2013;
+		int startYear = 2014;
+		int endYear = 2014;
 		
 		Map<Integer, String> teamMap = teamService.getTeamNamesMap(League.CFB);
 		
@@ -43,7 +47,7 @@ public class SeasonGamesStatsScraper {
 			for(Integer teamId : teamMap.keySet()) {
 				logger.info("Starting with games for teamId: " + teamId);
 				TeamSeasonGamesStatsScraper teamStatsScraper = new TeamSeasonGamesStatsScraper(teamId, year,
-						componentStatsSettersHolder, seasonProcessedGamesHolder, documentGetter);
+						componentStatsSettersHolder, seasonProcessedGamesHolder, documentGetter, cfbStatsRootURL);
 				List<GameInfoDto> gameStats = teamStatsScraper.getTeamSeasonGameStats();
 				logger.info("Scraped games for teamId: " + teamId);
 				gameInfoService.createGameInfos(gameStats);

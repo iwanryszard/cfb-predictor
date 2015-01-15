@@ -17,10 +17,11 @@ public class GameInfoDaoImpl extends BaseDao<GameInfo, Integer> implements GameI
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Date> getAllGameDates(League league) {
+	public List<Date> getAllGameDates(League league, Date startDate) {
 		Session session = getSessionFactory().getCurrentSession();
-		Query query = session.createQuery("select distinct g.gameDate from GameInfo g where g.league = :league order by g.gameDate");
+		Query query = session.createQuery("select distinct g.gameDate from GameInfo g where g.league = :league and g.gameDate > :startDate order by g.gameDate");
 		query.setParameter("league", league);
+		query.setParameter("startDate", startDate);
 		List<Date> result = query.list();
 		return result;
 	}

@@ -123,7 +123,7 @@ public class StartWebBean implements Serializable {
 	public void aggregateGameStats() {
 		try {
 			League league = getLeague();
-			statsAggregator.aggregateGamesForSeasons(2010, 2013, league);
+			statsAggregator.aggregateGamesForSeasons(2014, 2014, league);
 		} catch(Exception e) {
 			logger.info("Exception while aggregating stats", e);
 		}
