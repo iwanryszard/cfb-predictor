@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -76,6 +75,7 @@ public class WekaFileCreator implements Serializable {
 			scaledData = dataScaler.getScaledData(data.getLabels(), data.getInstances(), 
 				-1.0, 1.0, null, null, scaleRestoreDto);
 			instances = scaledData.getInstances();
+			labels = scaledData.getLabels();
 		}
 		
 		if( !testFile && scaledData != null) {
@@ -90,16 +90,7 @@ public class WekaFileCreator implements Serializable {
 			fileSpecPart = "test";
 		}
 		
-		writeToFile("CFB-" + fileSpecPart + ".arff", scaledData.getLabels(), instances);
-	}
-	
-	private List<Double> convertLabels(List<Integer> labels) {
-		List<Double> result = new ArrayList<Double>(labels.size());
-		for(Integer label : labels) {
-			result.add(label.doubleValue());
-		}
-		
-		return result;
+		writeToFile("CFB-" + fileSpecPart + ".arff", labels, instances);
 	}
 	
 	private void writeToFile(String fileName, List<Double> labels, List<Instance> instances) {
