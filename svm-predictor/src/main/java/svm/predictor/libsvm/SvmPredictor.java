@@ -13,14 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import svm.predictor.libsvm.data.scaling.IndexValuePair;
+import svm.predictor.weka.dto.Attribute;
+import svm.predictor.weka.dto.Instance;
 
 @Service("svmPredictor")
 public class SvmPredictor {
 
 	private static final Logger logger = LoggerFactory.getLogger(SvmPredictor.class);
 	
-	public PredictionResultDto predict(List<List<IndexValuePair>> features, svm_model model, Boolean probability) {
+	public PredictionResultDto predict(List<Instance> instances, svm_model model, Boolean probability) {
 		if (Boolean.TRUE.equals(probability)) {
 			if (svm.svm_check_probability_model(model) == 0) {
 				logger.error("Model does not support probabiliy estimates\n");
@@ -49,16 +50,16 @@ public class SvmPredictor {
 		
 		List<Double> predictions = new ArrayList<Double>();
 		List<double[]> probabilityEstimates = new ArrayList<double[]>();
-		for(int i = 0; i < features.size(); ++i) {
-			List<IndexValuePair> currentFeatures = features.get(i);
-			int currFeatSize = currentFeatures.size();
+		for(int i = 0; i < instances.size(); ++i) {
+			Instance currentInstance = instances.get(i);
+			int currInstanceSize = currentInstance.getAttributes().size();
 			
-			svm_node[] x = new svm_node[currFeatSize];
-			for(int j = 0; j < currFeatSize; ++j) {
-				IndexValuePair feature = currentFeatures.get(j);
+			svm_node[] x = new svm_node[currInstanceSize];
+			for(int j = 0; j < currInstanceSize; ++j) {
+				Attribute attribute = currentInstance.getAttributes().get(j);
 				x[j] = new svm_node();
-				x[j].index = feature.getIndex();
-				x[j].value = feature.getValue();
+				x[j].index = attribute.getIndex();
+				x[j].value = attribute.getValue().doubleValue();
 			}
 			
 			double v;

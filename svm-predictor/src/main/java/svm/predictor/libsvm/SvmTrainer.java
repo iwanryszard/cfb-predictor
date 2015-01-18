@@ -13,7 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import svm.predictor.libsvm.data.scaling.IndexValuePair;
+import svm.predictor.weka.dto.Attribute;
+import svm.predictor.weka.dto.Instance;
 
 @Service("svmTrainer")
 public class SvmTrainer {
@@ -28,11 +29,11 @@ public class SvmTrainer {
 		}
 	};
 	
-	public svm_model trainModel(List<Double> labels, List<List<IndexValuePair>> features) {
+	public svm_model trainModel(List<Double> labels, List<Instance> instances) {
 		svm_parameter param = getParameters(null, null, null, null, null);
 		svm.svm_set_print_string_function(print_func);
 		
-		svm_problem prob = buildProblem(labels, features, param);
+		svm_problem prob = buildProblem(labels, instances, param);
 		
 		String errorMsg = svm.svm_check_parameter(prob, param);
 		if (errorMsg != null) {
@@ -44,11 +45,11 @@ public class SvmTrainer {
 		return model;
 	}
 	
-	public CrossValidationResultDto crossValidation(List<Double> labels, List<List<IndexValuePair>> features, int foldNumber) {
+	public CrossValidationResultDto crossValidation(List<Double> labels, List<Instance> instances, int foldNumber) {
 		svm_parameter param = getParameters(null, null, null, null, null);
 		svm.svm_set_print_string_function(print_func);
 		
-		svm_problem prob = buildProblem(labels, features, param);
+		svm_problem prob = buildProblem(labels, instances, param);
 		
 		String errorMsg = svm.svm_check_parameter(prob, param);
 		if (errorMsg != null) {
@@ -139,7 +140,7 @@ public class SvmTrainer {
 		return param;
 	}
 	
-	private svm_problem buildProblem(List<Double> labels, List<List<IndexValuePair>> features, svm_parameter param) {
+	private svm_problem buildProblem(List<Double> labels, List<Instance> instances, svm_parameter param) {
 		svm_problem prob = new svm_problem();
 		prob.l = labels.size();
 		prob.x = new svm_node[prob.l][];
@@ -150,18 +151,18 @@ public class SvmTrainer {
 		for(int i=0;i<prob.l;i++) {
 			prob.y[i] = labels.get(i);
 			
-			List<IndexValuePair> currentFeatures = features.get(i);
-			int currFeatSize = currentFeatures.size();
-			prob.x[i] = new svm_node[currFeatSize];
-			for(int j = 0; j < currFeatSize; ++j) {
-				IndexValuePair feature = currentFeatures.get(j);
+			Instance currentInstance = instances.get(i);
+			int currInstanceSize = currentInstance.getAttributes().size();
+			prob.x[i] = new svm_node[currInstanceSize];
+			for(int j = 0; j < currInstanceSize; ++j) {
+				Attribute attribute = currentInstance.getAttributes().get(j);
 				prob.x[i][j] = new svm_node();
-				prob.x[i][j].index = feature.getIndex();
-				prob.x[i][j].value = feature.getValue();
+				prob.x[i][j].index = attribute.getIndex();
+				prob.x[i][j].value = attribute.getValue().doubleValue();
 			}
 			
-			if(currFeatSize > 0) {
-				max_index = Math.max(max_index, prob.x[i][currFeatSize - 1].index);
+			if(currInstanceSize > 0) {
+				max_index = Math.max(max_index, prob.x[i][currInstanceSize - 1].index);
 			}
 		}
 		

@@ -95,22 +95,22 @@ public class PredictionsWebBean implements Serializable {
 		modelTrained = false;
 		BaseDataRetriever dataRetriever = getDataRetriever();
 		SvmDataDto trainingData = svmDataRetriever.getGamesAsSvmData(trainingStartYear, trainingEndYear, minimumGamesPlayed, dataRetriever);
-		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getFeatures().get(0).size() + " features each";
-		ScaleResultDto scaledTrainingData = dataScaler.getScaledData(trainingData.getLabels(), trainingData.getFeatures(), 
+		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getInstances().get(0).getAttributes().size() + " attributes each";
+		ScaleResultDto scaledTrainingData = dataScaler.getScaledData(trainingData.getLabels(), trainingData.getInstances(), 
 				-1.0, 1.0, null, null, null);
 		scaleRestoreDto = scaledTrainingData.getScaleRestoreDto();
-		model = svmTrainer.trainModel(scaledTrainingData.getLabels(), scaledTrainingData.getFeatures());
+		model = svmTrainer.trainModel(scaledTrainingData.getLabels(), scaledTrainingData.getInstances());
 		modelTrained = true;
 	}
 	
 	public void predict() {
 		BaseDataRetriever dataRetriever = getDataRetriever();
 		SvmDataDto testingData = svmDataRetriever.getGamesAsSvmData(testingStartYear, testingEndYear, minimumGamesPlayed, dataRetriever);
-		testingSummaryMsg = testingData.getLabels().size() + " games with " + testingData.getFeatures().get(0).size() + " features each";
-		ScaleResultDto scaledTestingData = dataScaler.getScaledData(testingData.getLabels(), testingData.getFeatures(), null, null,
+		testingSummaryMsg = testingData.getLabels().size() + " games with " + testingData.getInstances().get(0).getAttributes().size() + " attributes each";
+		ScaleResultDto scaledTestingData = dataScaler.getScaledData(testingData.getLabels(), testingData.getInstances(), null, null,
 				null, null, scaleRestoreDto);
 
-		PredictionResultDto predictionResult = svmPredictor.predict(scaledTestingData.getFeatures(), model, null);
+		PredictionResultDto predictionResult = svmPredictor.predict(scaledTestingData.getInstances(), model, null);
 		expectedResult = scaledTestingData.getLabels();
 		predictions = predictionResult.getPredictions();
 		gamesOdds = testingData.getGamesOdds();

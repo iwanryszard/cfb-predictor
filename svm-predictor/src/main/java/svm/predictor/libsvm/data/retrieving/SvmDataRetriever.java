@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import svm.predictor.dto.AggregatedGameStatsDto;
 import svm.predictor.dto.GameInfoDto;
 import svm.predictor.service.AggregatedGameStatsService;
+import svm.predictor.weka.dto.Instance;
 
 @Service("svmDataRetriever")
 public class SvmDataRetriever {
@@ -55,48 +56,30 @@ public class SvmDataRetriever {
 		List<AggregatedGameStatsDto> aggregatedGames = aggregatedGameStatsService.list(params, null);
 		logger.info("Fetched {} game aggregations from {} to {}", aggregatedGames.size(), startSeason, endSeason);
 		
-		List<Integer> labels = new ArrayList<Integer>(aggregatedGames.size());
-		List<List<Number>> features = new ArrayList<List<Number>>(aggregatedGames.size());
+		List<Double> labels = new ArrayList<Double>(aggregatedGames.size());
+		List<Instance> instances = new ArrayList<Instance>(aggregatedGames.size());
 		List<GameOddsDto> gamesOdds = new ArrayList<GameOddsDto>();
+		List<String> attributeNames = dataRetriever.getAttributeNames();
 		for(AggregatedGameStatsDto aggregatedGame : aggregatedGames) {
 			GameInfoDto currentGame = aggregatedGame.getGame();
 			Integer currentLabel = dataRetriever.getLabel(currentGame);
-			labels.add(currentLabel);
+			labels.add(currentLabel.doubleValue());
 			
-			List<Number> currentFeatures = new ArrayList<Number>();
-			currentFeatures.add(currentGame.getDistanceBetweenTeamsKm());
-			dataRetriever.addSpecificFeatures(aggregatedGame, currentFeatures);
-			
-			dataRetriever.addTeamAggregatedStats(aggregatedGame.getHomeTeamStats(), currentFeatures);
-			dataRetriever.addSimpleStats(aggregatedGame.getHomeTeamLastFive(), currentFeatures);
-			dataRetriever.addSimpleStats(aggregatedGame.getHomeTeamLastSeason(), currentFeatures);
-			
-			dataRetriever.addTeamAggregatedStats(aggregatedGame.getAwayTeamStats(), currentFeatures);
-			dataRetriever.addSimpleStats(aggregatedGame.getAwayTeamLastFive(), currentFeatures);
-			dataRetriever.addSimpleStats(aggregatedGame.getAwayTeamLastSeason(), currentFeatures);
-			
-			convertNullsToZeros(currentFeatures);
-			features.add(currentFeatures);
+			Instance instance = dataRetriever.getInstance(aggregatedGame);
+			instances.add(instance);
 			
 			dataRetriever.addGameOdds(currentGame, gamesOdds);
 		}
 		
 		logger.info("Labels size: {}", labels.size());
-		logger.info("Feature row size: {}", features.get(0).size());
+		logger.info("Attributes per instance: {}", instances.get(0).getAttributes().size());
 		
 		SvmDataDto result = new SvmDataDto();
 		result.setLabels(labels);
-		result.setFeatures(features);
+		result.setInstances(instances);
 		result.setGamesOdds(gamesOdds);
+		result.setAttributeNames(attributeNames);
 		
 		return result;
-	}
-	
-	private void convertNullsToZeros(List<Number> features) {
-		for(int i = 0; i < features.size(); ++i) {
-			if(features.get(i) == null) {
-				features.set(i, 0);
-			}
-		}
 	}
 }

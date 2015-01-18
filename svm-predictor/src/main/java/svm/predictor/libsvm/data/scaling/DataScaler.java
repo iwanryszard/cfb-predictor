@@ -7,12 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import svm.predictor.weka.dto.Attribute;
+import svm.predictor.weka.dto.Instance;
+
 @Service("dataScaler")
 public class DataScaler {
 
 	private static final Logger logger = LoggerFactory.getLogger(DataScaler.class);
 	
-	public ScaleResultDto getScaledData(List<Integer> labels, List<List<Number>> features, Double xLower, 
+	public ScaleResultDto getScaledData(List<Double> labels, List<Instance> instances, Double xLower, 
 			Double xUpper, Double yLower, Double yUpper, ScaleRestoreDto scaleRestore) {
 		double lower = -1.0;
 		double upper = 1.0;
@@ -45,8 +48,8 @@ public class DataScaler {
 			throw new RuntimeException("inconsistent lower/upper specification");
 		}
 		
-		//in our case all examples will have equal number of features
-		max_index = features.get(0).size();
+		//in our case all examples will have equal number of features before scaling
+		max_index = instances.get(0).getAttributes().size();
 		
 		feature_max = new double[(max_index+1)];
 		feature_min = new double[(max_index+1)];
@@ -58,15 +61,15 @@ public class DataScaler {
 		}
 		
 		for(int i = 0; i < labels.size(); ++i) {
-			int label = labels.get(i);
+			Double label = labels.get(i);
 			y_max = Math.max(y_max, label);
 			y_min = Math.min(y_min, label);
 			
-			List<Number> currentFeatures = features.get(i);
-			for(int j = 0; j < currentFeatures.size(); ++j) {
+			List<Attribute> currentAttributes = instances.get(i).getAttributes();
+			for(int j = 0; j < currentAttributes.size(); ++j) {
 				//indexes are 1 based
 				int index = j + 1;
-				Double value = currentFeatures.get(j).doubleValue();
+				Double value = currentAttributes.get(j).getValue().doubleValue();
 				
 				feature_max[index] = Math.max(feature_max[index], value);
 				feature_min[index] = Math.min(feature_min[index], value);
@@ -107,31 +110,32 @@ public class DataScaler {
 		result.setScaleRestoreDto(scaleRestore);
 		
 		List<Double> scaledLabels = new ArrayList<Double>(labels.size());
-		List<List<IndexValuePair>> scaledFeatures = new ArrayList<List<IndexValuePair>>(labels.size());
+		List<Instance> scaledInstances = new ArrayList<Instance>(labels.size());
 		for(int i = 0; i < labels.size(); ++i) {
-			int label = labels.get(i);
-			double labelVal = label;
+			Double label = labels.get(i);
 			if(y_scaling) {
-				labelVal = scaleLabel(label, y_lower, y_upper, y_min, y_max);
+				label = scaleLabel(label, y_lower, y_upper, y_min, y_max);
 			}
-			scaledLabels.add(labelVal);
+			scaledLabels.add(label);
 			
-			List<Number> currentFeatures = features.get(i);
-			List<IndexValuePair> currentScaledFeatures = new ArrayList<IndexValuePair>();
-			for(int j = 0; j < currentFeatures.size(); ++j) {
+			List<Attribute> currentAttributes = instances.get(i).getAttributes();
+			List<Attribute> currentScaledAttributes = new ArrayList<Attribute>();
+			for(int j = 0; j < currentAttributes.size(); ++j) {
 				//indexes are 1 based
 				int index = j + 1;
-				Double value = currentFeatures.get(j).doubleValue();
+				Attribute currentAttribute = currentAttributes.get(j);
+				Double value = currentAttribute.getValue().doubleValue();
 				Double scaledValue = scaleFeature(index, value, lower, upper, feature_min, feature_max);
 				if(scaledValue != null) {
-					currentScaledFeatures.add(new IndexValuePair(index, scaledValue));
+					currentAttribute.setValue(scaledValue);
+					currentScaledAttributes.add(currentAttribute);
 				}
 			}
-			scaledFeatures.add(currentScaledFeatures);
+			scaledInstances.add(new Instance(currentScaledAttributes));
 		}
 		
 		result.setLabels(scaledLabels);
-		result.setFeatures(scaledFeatures);
+		result.setInstances(scaledInstances);
 		
 		return result;
 	}

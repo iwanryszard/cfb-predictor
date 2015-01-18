@@ -2,28 +2,37 @@ package svm.predictor.libsvm.data.retrieving;
 
 import java.util.List;
 
+import svm.predictor.weka.dto.Instance;
+
 public class SvmDataDto {
 
-	private List<Integer> labels;
-	private List<List<Number>> features;
+	private List<Double> labels;
+	private List<Instance> instances;
 	private List<GameOddsDto> gamesOdds;
+	private List<String> attributeNames;
 	
-	public List<Integer> getLabels() {
+	public List<Double> getLabels() {
 		return labels;
 	}
-	public void setLabels(List<Integer> labels) {
+	public void setLabels(List<Double> labels) {
 		this.labels = labels;
 	}
-	public List<List<Number>> getFeatures() {
-		return features;
+	public List<Instance> getInstances() {
+		return instances;
 	}
-	public void setFeatures(List<List<Number>> features) {
-		this.features = features;
+	public void setInstances(List<Instance> instances) {
+		this.instances = instances;
 	}
 	public List<GameOddsDto> getGamesOdds() {
 		return gamesOdds;
 	}
 	public void setGamesOdds(List<GameOddsDto> gamesOdds) {
 		this.gamesOdds = gamesOdds;
+	}
+	public List<String> getAttributeNames() {
+		return attributeNames;
+	}
+	public void setAttributeNames(List<String> attributeNames) {
+		this.attributeNames = attributeNames;
 	}
 }

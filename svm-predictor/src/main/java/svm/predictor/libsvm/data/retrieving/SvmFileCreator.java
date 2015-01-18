@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import svm.predictor.weka.dto.Attribute;
+import svm.predictor.weka.dto.Instance;
+
 
 @Service("svmFileCreator")
 public class SvmFileCreator {
@@ -21,10 +24,10 @@ public class SvmFileCreator {
 	
 	public void createSVMFile(int startSeason, int endSeason, String fileName, Integer minimumGamesPlayed) {
 		SvmDataDto svmData = svmDataRetriever.getGamesAsSvmData(startSeason, endSeason, minimumGamesPlayed, new PointSpreadDataRetriever(new CfbSupportedFeaturesProvider()));
-		writeToFile(fileName, svmData.getLabels(), svmData.getFeatures());
+		writeToFile(fileName, svmData.getLabels(), svmData.getInstances());
 	}
 	
-	private void writeToFile(String fileName, List<Integer> labels, List<List<Number>> features) {
+	private void writeToFile(String fileName, List<Double> labels, List<Instance> instances) {
 		String path = "D:\\libsvm-320\\windows\\";
 		BufferedWriter writer = null;
 		try {
@@ -32,9 +35,9 @@ public class SvmFileCreator {
 			writer = new BufferedWriter(new FileWriter(file));
 			
 			for(int i = 0; i < labels.size(); ++i) {
-				Integer label = labels.get(i);
-				List<Number> currentFeatures = features.get(i);
-				StringBuilder line = getLine(label, currentFeatures);
+				Double label = labels.get(i);
+				List<Attribute> currentAttributes = instances.get(i).getAttributes();
+				StringBuilder line = getLine(label, currentAttributes);
 				writer.append(line);
 			}
 		} catch(Exception e) {
@@ -48,11 +51,11 @@ public class SvmFileCreator {
 		}
 	}
 	
-	private StringBuilder getLine(Integer label, List<Number> features ) {
+	private StringBuilder getLine(Double label, List<Attribute> attributes ) {
 		StringBuilder line = new StringBuilder();
 		line.append(label + " ");
-		for(int i = 0; i < features.size(); ++i) {
-			line.append((i + 1) + ":" + features.get(i) + " ");
+		for(int i = 0; i < attributes.size(); ++i) {
+			line.append((i + 1) + ":" + attributes.get(i).getValue() + " ");
 		}
 		line.append("\n");
 		

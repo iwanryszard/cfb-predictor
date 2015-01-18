@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import svm.predictor.dto.AggregatedGameStatsDto;
 import svm.predictor.dto.GameInfoDto;
-import svm.predictor.dto.TeamAggregatedGameStatsDto;
-import svm.predictor.dto.TeamSimpleAggregatedStats;
 
 public class PointTotalDataRetriever extends BaseDataRetriever {
 
@@ -30,20 +27,23 @@ public class PointTotalDataRetriever extends BaseDataRetriever {
 	}
 	
 	@Override
-	public void addSpecificFeatures(AggregatedGameStatsDto aggregatedGame, List<Number> features) {
-		super.addSpecificFeatures(aggregatedGame, features);
-		features.add(aggregatedGame.getGame().getPointTotal());
+	protected List<String> getSimpleStatNames() {
+		List<String> result = super.getSimpleStatNames();
+		result.add("UnderPct");
+		return result;
 	}
 	
 	@Override
-	public void addSimpleStats(TeamSimpleAggregatedStats stats, List<Number> features) {
-		super.addSimpleStats(stats, features);
-		features.add(stats.getUnderPct());
+	protected List<String> getAggregatedStatNames() {
+		List<String> result = super.getAggregatedStatNames();
+		result.add("UnderPct");
+		return result;
 	}
 	
 	@Override
-	public void addTeamAggregatedStats(TeamAggregatedGameStatsDto stats, List<Number> features) {
-		super.addTeamAggregatedStats(stats, features);
-		features.add(stats.getUnderPct());
+	protected List<String> getSpecificAttributesNames() {
+		List<String> result = super.getSpecificAttributesNames();
+		result.add("PointTotal");
+		return result;
 	}
 }
