@@ -1,9 +1,7 @@
 package svm.predictor.stats.web;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.List;
 
 import libsvm.svm;
@@ -19,23 +17,12 @@ import org.springframework.stereotype.Component;
 import svm.predictor.libsvm.PredictionResultDto;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;
-import svm.predictor.libsvm.data.retrieving.BaseDataRetriever;
-import svm.predictor.libsvm.data.retrieving.CfbSupportedFeaturesProvider;
 import svm.predictor.libsvm.data.retrieving.GameOddsDto;
-import svm.predictor.libsvm.data.retrieving.MoneyLineDataRetriever;
-import svm.predictor.libsvm.data.retrieving.NflSupportedFeaturesProvider;
-import svm.predictor.libsvm.data.retrieving.PointSpreadDataRetriever;
-import svm.predictor.libsvm.data.retrieving.PointTotalDataRetriever;
-import svm.predictor.libsvm.data.retrieving.SupportedFeaturesProvider;
 import svm.predictor.libsvm.data.retrieving.SvmDataDto;
-import svm.predictor.libsvm.data.retrieving.SvmDataRetriever;
-import svm.predictor.libsvm.data.scaling.DataScaler;
-import svm.predictor.libsvm.data.scaling.ScaleRestoreDto;
-import svm.predictor.libsvm.data.scaling.ScaleResultDto;
 
 @Component("predictionsWebBean")
 @Scope("view")
-public class PredictionsWebBean implements Serializable {
+public class PredictionsWebBean extends BasePredictionWebBean {
 
 	/**
 	 * 
@@ -43,14 +30,6 @@ public class PredictionsWebBean implements Serializable {
 	private static final long serialVersionUID = -1003232478601320283L;
 	
 	private static Logger logger = LoggerFactory.getLogger(PredictionsWebBean.class);
-	
-	private Integer trainingStartYear;
-	private Integer trainingEndYear;
-	
-	private Integer testingStartYear;
-	private Integer testingEndYear;
-	
-	private Integer minimumGamesPlayed;
 	
 	private String resultMessage;
 	
@@ -71,47 +50,26 @@ public class PredictionsWebBean implements Serializable {
 	
 	private boolean modelTrained;
 	
-	private ScaleRestoreDto scaleRestoreDto;
-	
-	private List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Money Line");
-	
-	private String selectedPredictionType;
-	
-	@Autowired
-	private DataScaler dataScaler;
-	
 	@Autowired
 	private SvmTrainer svmTrainer;
 	
 	@Autowired
 	private SvmPredictor svmPredictor;
 	
-	@Autowired
-	private SvmDataRetriever svmDataRetriever;
-
-	private int leagueValue;
-	
 	public void trainModel() {
 		modelTrained = false;
-		BaseDataRetriever dataRetriever = getDataRetriever();
-		SvmDataDto trainingData = svmDataRetriever.getGamesAsSvmData(trainingStartYear, trainingEndYear, minimumGamesPlayed, dataRetriever);
-		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getInstances().get(0).getAttributes().size() + " attributes each";
-		ScaleResultDto scaledTrainingData = dataScaler.getScaledData(trainingData.getLabels(), trainingData.getInstances(), 
-				-1.0, 1.0, null, null, null);
-		scaleRestoreDto = scaledTrainingData.getScaleRestoreDto();
-		model = svmTrainer.trainModel(scaledTrainingData.getLabels(), scaledTrainingData.getInstances());
+		scaleRestoreDto = null;
+		SvmDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getAttributeNames().size() + " attributes each";
+		model = svmTrainer.trainModel(trainingData.getLabels(), trainingData.getInstances());
 		modelTrained = true;
 	}
 	
 	public void predict() {
-		BaseDataRetriever dataRetriever = getDataRetriever();
-		SvmDataDto testingData = svmDataRetriever.getGamesAsSvmData(testingStartYear, testingEndYear, minimumGamesPlayed, dataRetriever);
-		testingSummaryMsg = testingData.getLabels().size() + " games with " + testingData.getInstances().get(0).getAttributes().size() + " attributes each";
-		ScaleResultDto scaledTestingData = dataScaler.getScaledData(testingData.getLabels(), testingData.getInstances(), null, null,
-				null, null, scaleRestoreDto);
-
-		PredictionResultDto predictionResult = svmPredictor.predict(scaledTestingData.getInstances(), model, null);
-		expectedResult = scaledTestingData.getLabels();
+		SvmDataDto testingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		testingSummaryMsg = testingData.getLabels().size() + " games with " + testingData.getAttributeNames().size() + " attributes each";
+		PredictionResultDto predictionResult = svmPredictor.predict(testingData.getInstances(), model, null);
+		expectedResult = testingData.getLabels();
 		predictions = predictionResult.getPredictions();
 		gamesOdds = testingData.getGamesOdds();
 
@@ -148,22 +106,6 @@ public class PredictionsWebBean implements Serializable {
 		}
 	}
 	
-	private BaseDataRetriever getDataRetriever() {
-		BaseDataRetriever result = null;
-		SupportedFeaturesProvider featureProvider = getSupportedFeaturesProvider();
-		if(selectedPredictionType.equals("Point Spread")) {
-			result = new PointSpreadDataRetriever(featureProvider);
-		} else if(selectedPredictionType.equals("Point Total")) {
-			result = new PointTotalDataRetriever(featureProvider);
-		} else if(selectedPredictionType.equals("Money Line")) {
-			result = new MoneyLineDataRetriever(featureProvider);
-		} else {
-			result = new PointSpreadDataRetriever(featureProvider);
-		}
-		
-		return result;
-	}
-	
 	public void computeStatsForStake() {
 		totalStaked = 0.0;
 		totalWon = 0.0;
@@ -183,46 +125,6 @@ public class PredictionsWebBean implements Serializable {
 		roiPct = (totalWon / totalStaked) * 100;
 	}
 
-	public Integer getTrainingStartYear() {
-		return trainingStartYear;
-	}
-
-	public void setTrainingStartYear(Integer trainingStartYear) {
-		this.trainingStartYear = trainingStartYear;
-	}
-
-	public Integer getTrainingEndYear() {
-		return trainingEndYear;
-	}
-
-	public void setTrainingEndYear(Integer trainingEndYear) {
-		this.trainingEndYear = trainingEndYear;
-	}
-
-	public Integer getTestingStartYear() {
-		return testingStartYear;
-	}
-
-	public void setTestingStartYear(Integer testingStartYear) {
-		this.testingStartYear = testingStartYear;
-	}
-
-	public Integer getTestingEndYear() {
-		return testingEndYear;
-	}
-
-	public void setTestingEndYear(Integer testingEndYear) {
-		this.testingEndYear = testingEndYear;
-	}
-
-	public Integer getMinimumGamesPlayed() {
-		return minimumGamesPlayed;
-	}
-
-	public void setMinimumGamesPlayed(Integer minimumGamesPlayed) {
-		this.minimumGamesPlayed = minimumGamesPlayed;
-	}
-
 	public String getResultMessage() {
 		return resultMessage;
 	}
@@ -237,22 +139,6 @@ public class PredictionsWebBean implements Serializable {
 
 	public void setModelTrained(boolean modelTrained) {
 		this.modelTrained = modelTrained;
-	}
-
-	public List<String> getPredictionTypes() {
-		return predictionTypes;
-	}
-
-	public void setPredictionTypes(List<String> predictionTypes) {
-		this.predictionTypes = predictionTypes;
-	}
-
-	public String getSelectedPredictionType() {
-		return selectedPredictionType;
-	}
-
-	public void setSelectedPredictionType(String selectedPredictionType) {
-		this.selectedPredictionType = selectedPredictionType;
 	}
 
 	public String getTrainingSummaryMsg() {
@@ -309,22 +195,6 @@ public class PredictionsWebBean implements Serializable {
 
 	public void setRoiPct(Double roiPct) {
 		this.roiPct = roiPct;
-	}
-	
-	public int getLeagueValue() {
-		return leagueValue;
-	}
-
-	public void setLeagueValue(int leagueValue) {
-		this.leagueValue = leagueValue;
-	}
-	
-	private SupportedFeaturesProvider getSupportedFeaturesProvider() {
-		if(leagueValue == 0) {
-			return new CfbSupportedFeaturesProvider();
-		} else {
-			return new NflSupportedFeaturesProvider();
-		}
 	}
 
 }

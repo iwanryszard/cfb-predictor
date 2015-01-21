@@ -4,26 +4,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml"   
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:base-prediction="http://java.sun.com/jsf/composite/base-prediction">
  
   <h:form prependId="false"> 
   	<h:messages errorClass="errorMessage" showDetail="false" showSummary="true"/>
-  
         
- 	<p:panelGrid columns="2">
- 		<h:outputText value="Start season" /> 
- 		<h:outputText value="End season" /> 
- 		<p:inputText id="start" value="#{wekaFileCreator.startYear}" required="true"/>
- 		<p:inputText id="end" value="#{wekaFileCreator.endYear}" required="true"/>
- 		<h:outputText value="Minimum games played:" /> 
- 		<p:inputText id="minimumGames" value="#{wekaFileCreator.minimumGamesPlayed}"/>
- 		<h:outputText value="Scale data:" /> 
- 		<p:selectBooleanCheckbox id="scaleData" value="#{wekaFileCreator.scaleData}"/>
- 		<h:outputText value="Test:" /> 
- 		<p:selectBooleanCheckbox id="test" value="#{wekaFileCreator.testFile}"/>
- 	</p:panelGrid>
+ 	<base-prediction:base-prediction bean="#{wekaFileCreator}" />
  		
-    <p:commandButton value="Create File" id="createFileButton" update="@form" 
-    	actionListener="#{wekaFileCreator.createFile}" />
+    <p:commandButton value="Create Training File" id="trainingFileButton" update="@form" 
+    	actionListener="#{wekaFileCreator.createTrainingFile}" />
+    <p:commandButton value="Create Testing File" id="testingFileButton" update="@form" 
+    	actionListener="#{wekaFileCreator.createTestingFile}" />
   </h:form>
 </html>

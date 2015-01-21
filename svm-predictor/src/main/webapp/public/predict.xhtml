@@ -4,40 +4,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml"   
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:base-prediction="http://java.sun.com/jsf/composite/base-prediction">
  
   <h:form prependId="false"> 
   	<h:messages errorClass="errorMessage" showDetail="false" showSummary="true"/>
-  	
-  	<h:selectOneMenu id="leagues" value="#{predictionsWebBean.leagueValue}">
-       <f:selectItem itemLabel="CFB" itemValue="0" />
-       <f:selectItem itemLabel="NFL" itemValue="1" />
-    </h:selectOneMenu>
-    
-  	<h:selectOneMenu id="predictionType" value="#{predictionsWebBean.selectedPredictionType}">
-        <f:selectItems value="#{predictionsWebBean.predictionTypes}" />
-    </h:selectOneMenu>
-        
- 	<p:panelGrid columns="2">
- 		<h:outputText value="Training start season" /> 
- 		<h:outputText value="Training end season" /> 
- 		<p:inputText id="trainingStart" value="#{predictionsWebBean.trainingStartYear}" required="true"/>
- 		<p:inputText id="trainingEnd" value="#{predictionsWebBean.trainingEndYear}" required="true"/>
- 		<h:outputText value="Minimum games played:" /> 
- 		<p:inputText id="minimumGames" value="#{predictionsWebBean.minimumGamesPlayed}"/>
- 	</p:panelGrid>
- 		
+ 	
+ 	<base-prediction:base-prediction bean="#{predictionsWebBean}" />
+			
     <p:commandButton value="Train Model" id="trainModelButton" update="@form" 
     	actionListener="#{predictionsWebBean.trainModel}" />
     <h:outputText id="trainingSummary" value="#{predictionsWebBean.trainingSummaryMsg}" />
-        
-    <p:panelGrid columns="2">	
- 		<h:outputText value="Testing start season" /> 
- 		<h:outputText value="Testing end season" /> 
- 		<p:inputText id="testingStart" value="#{predictionsWebBean.testingStartYear}" />
- 		<p:inputText id="testingEnd" value="#{predictionsWebBean.testingEndYear}" />
- 	</p:panelGrid>
  	
+ 	<br/>	
  	<p:commandButton value="Predict" id="predictButton" 
          update="@form" actionListener="#{predictionsWebBean.predict}" disabled="#{not predictionsWebBean.modelTrained}"/>
     <h:outputText id="testingSummary" value="#{predictionsWebBean.testingSummaryMsg}" />

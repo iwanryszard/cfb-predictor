@@ -3,28 +3,20 @@ package svm.predictor.stats.web;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.Serializable;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import svm.predictor.libsvm.data.retrieving.CfbSupportedFeaturesProvider;
-import svm.predictor.libsvm.data.retrieving.PointSpreadDataRetriever;
 import svm.predictor.libsvm.data.retrieving.SvmDataDto;
-import svm.predictor.libsvm.data.retrieving.SvmDataRetriever;
-import svm.predictor.libsvm.data.scaling.DataScaler;
-import svm.predictor.libsvm.data.scaling.ScaleRestoreDto;
-import svm.predictor.libsvm.data.scaling.ScaleResultDto;
 import svm.predictor.weka.dto.Attribute;
 import svm.predictor.weka.dto.Instance;
 
 @Component("wekaFileCreator")
 @Scope("view")
-public class WekaFileCreator implements Serializable {
+public class WekaFileCreator extends BasePredictionWebBean {
 
 	/**
 	 * 
@@ -33,64 +25,24 @@ public class WekaFileCreator implements Serializable {
 	
 	private static Logger logger = LoggerFactory.getLogger(WekaFileCreator.class);
 
-	private Integer startYear;
-	private Integer endYear;
-	private ScaleRestoreDto scaleRestoreDto;
-	private Integer minimumGamesPlayed;
-	private boolean testFile;
-	private boolean scaleData = true;
 	private int attributeCount;
 	private List<String> attributeNames;
 	
-	@Autowired
-	private DataScaler dataScaler;
-	
-	@Autowired
-	private SvmDataRetriever svmDataRetriever;
-
-	public Integer getStartYear() {
-		return startYear;
-	}
-
-	public void setStartYear(Integer startYear) {
-		this.startYear = startYear;
-	}
-
-	public Integer getEndYear() {
-		return endYear;
-	}
-
-	public void setEndYear(Integer endYear) {
-		this.endYear = endYear;
-	}
-	
-	public void createFile() {
-		SvmDataDto data = svmDataRetriever.getGamesAsSvmData(startYear, endYear, minimumGamesPlayed, new PointSpreadDataRetriever(new CfbSupportedFeaturesProvider()));
-		attributeNames = data.getAttributeNames();
+	public void createTrainingFile() {
+		scaleRestoreDto = null;
+		SvmDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		attributeNames = trainingData.getAttributeNames();
 		attributeCount = attributeNames.size();
-		List<Instance> instances = data.getInstances();
-		List<Double> labels = data.getLabels();
-		ScaleResultDto scaledData = null;
-		if(scaleData) {
-			scaledData = dataScaler.getScaledData(data.getLabels(), data.getInstances(), 
-				-1.0, 1.0, null, null, scaleRestoreDto);
-			instances = scaledData.getInstances();
-			labels = scaledData.getLabels();
-		}
 		
-		if( !testFile && scaledData != null) {
-			scaleRestoreDto = scaledData.getScaleRestoreDto();
-		} else {
-			scaleRestoreDto = null;
-		}
-		String fileSpecPart = "";
-		if( !testFile) {
-			fileSpecPart = "train";
-		} else {
-			fileSpecPart = "test";
-		}
+		writeToFile("CFB-train.arff", trainingData.getLabels(), trainingData.getInstances());
+	}
+	
+	public void createTestingFile() {
+		SvmDataDto trainingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		attributeNames = trainingData.getAttributeNames();
+		attributeCount = attributeNames.size();
 		
-		writeToFile("CFB-" + fileSpecPart + ".arff", labels, instances);
+		writeToFile("CFB-test.arff", trainingData.getLabels(), trainingData.getInstances());
 	}
 	
 	private void writeToFile(String fileName, List<Double> labels, List<Instance> instances) {
@@ -143,29 +95,5 @@ public class WekaFileCreator implements Serializable {
 		line.append(attributeCount + " " + label.intValue() + "}\n");
 		
 		return line;
-	}
-
-	public Integer getMinimumGamesPlayed() {
-		return minimumGamesPlayed;
-	}
-
-	public void setMinimumGamesPlayed(Integer minimumGamesPlayed) {
-		this.minimumGamesPlayed = minimumGamesPlayed;
-	}
-
-	public boolean getTestFile() {
-		return testFile;
-	}
-
-	public void setTestFile(boolean testFile) {
-		this.testFile = testFile;
-	}
-
-	public boolean getScaleData() {
-		return scaleData;
-	}
-
-	public void setScaleData(boolean scaleData) {
-		this.scaleData = scaleData;
 	}
 }
