@@ -14,14 +14,14 @@
  
     <composite:implementation>
  
-		<h:selectOneMenu id="leagues" value="#{cc.attrs.bean.leagueValue}">
+		<p:selectOneMenu id="leagues" value="#{cc.attrs.bean.leagueValue}">
        		<f:selectItem itemLabel="CFB" itemValue="0" />
        		<f:selectItem itemLabel="NFL" itemValue="1" />
-    	</h:selectOneMenu>
+    	</p:selectOneMenu>
     
-  		<h:selectOneMenu id="predictionType" value="#{cc.attrs.bean.selectedPredictionType}">
+  		<p:selectOneMenu id="predictionType" value="#{cc.attrs.bean.selectedPredictionType}">
         	<f:selectItems value="#{cc.attrs.bean.predictionTypes}" />
-    	</h:selectOneMenu>
+    	</p:selectOneMenu>
         
  		<p:panelGrid columns="2">
  			<h:outputText value="Training start season" /> 

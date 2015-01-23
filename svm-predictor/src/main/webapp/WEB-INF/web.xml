@@ -25,6 +25,11 @@
     <param-name>javax.faces.PROJECT_STAGE</param-name>
     <param-value>Development</param-value>
   </context-param>
+  
+  <context-param>
+    <param-name>primefaces.THEME</param-name>
+    <param-value>bluesky</param-value>
+  </context-param>
  
   <!-- JSF Mapping -->
   <servlet>
@@ -35,10 +40,6 @@
   <servlet-mapping>
     <servlet-name>facesServlet</servlet-name>
     <url-pattern>*.jsf</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>facesServlet</servlet-name>
-    <url-pattern>*.xhtml</url-pattern>
   </servlet-mapping>
  
 </web-app>

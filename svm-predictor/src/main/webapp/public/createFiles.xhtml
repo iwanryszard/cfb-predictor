@@ -6,15 +6,27 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:base-prediction="http://java.sun.com/jsf/composite/base-prediction">
- 
+  <h:head>
+  	Create Files
+  </h:head>
   <h:form prependId="false"> 
   	<h:messages errorClass="errorMessage" showDetail="false" showSummary="true"/>
         
- 	<base-prediction:base-prediction bean="#{wekaFileCreator}" />
+ 	<base-prediction:base-prediction bean="#{fileCreatorWebBean}" />
+ 	
+ 	<p:panelGrid columns="2">
+ 		<h:outputText value="File type:" /> 
+ 		<p:selectOneMenu id="fileType" value="#{fileCreatorWebBean.selectedFileType}">
+        	<f:selectItems value="#{fileCreatorWebBean.fileTypes}" />
+        	<p:ajax listener="#{fileCreatorWebBean.fileTypeChanged()}" update="filesLocation" />
+    	</p:selectOneMenu>
+ 		<h:outputText value="Files location:" /> 
+ 		<p:inputText id="filesLocation" value="#{fileCreatorWebBean.fileLocation}" />
+ 	</p:panelGrid>
  		
     <p:commandButton value="Create Training File" id="trainingFileButton" update="@form" 
-    	actionListener="#{wekaFileCreator.createTrainingFile}" />
+    	actionListener="#{fileCreatorWebBean.createTrainingFile}" />
     <p:commandButton value="Create Testing File" id="testingFileButton" update="@form" 
-    	actionListener="#{wekaFileCreator.createTestingFile}" />
+    	actionListener="#{fileCreatorWebBean.createTestingFile}" />
   </h:form>
 </html>

@@ -6,12 +6,14 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       >
- 
+  <h:head>
+  	Start
+  </h:head>
   <h:form> 
- 	<h:selectOneMenu id="leagues" value="#{startWebBean.leagueValue}">
+ 	<p:selectOneMenu id="leagues" value="#{startWebBean.leagueValue}">
        <f:selectItem itemLabel="CFB" itemValue="0" />
        <f:selectItem itemLabel="NFL" itemValue="1" />
-    </h:selectOneMenu>
+    </p:selectOneMenu>
  	<p:commandButton value="Stats" id="statsButton" update="@form" actionListener="#{startWebBean.getStats}"/>
  	<p:commandButton value="Spreads" id="spreadsButton" update="@form" actionListener="#{startWebBean.getSpreads}"/>
  	<p:commandButton value="Point Totals" id="totalsButton" update="@form" actionListener="#{startWebBean.getPointTotals}"/>
@@ -19,6 +21,5 @@
  	<p:commandButton value="Teams" id="teamsButton" update="@form" actionListener="#{startWebBean.getTeams}"/>
  	<p:commandButton value="Distances" id="distancesButton" update="@form" actionListener="#{startWebBean.getDistances}"/>
  	<p:commandButton value="AggregateStats" id="aggregateButton" update="@form" actionListener="#{startWebBean.aggregateGameStats}"/>
-  	<p:commandButton value="createSVMFiles" id="createFilesButton" update="@form" actionListener="#{startWebBean.createSVMFiles}" />
   </h:form>
 </html>

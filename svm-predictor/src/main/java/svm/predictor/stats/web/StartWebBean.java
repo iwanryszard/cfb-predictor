@@ -14,7 +14,6 @@ import svm.predictor.book.values.scraper.PointSpreadScraper;
 import svm.predictor.book.values.scraper.PointTotalScraper;
 import svm.predictor.distance.calculation.GamesDistanceSetter;
 import svm.predictor.dto.League;
-import svm.predictor.libsvm.data.retrieving.SvmFileCreator;
 import svm.predictor.nfl.stats.scraper.NflStatsScraper;
 import svm.predictor.nfl.teams.NflTeamsCreator;
 import svm.predictor.stats.aggregation.StatsAggregator;
@@ -46,9 +45,6 @@ public class StartWebBean implements Serializable {
 	
 	@Autowired
 	private StatsAggregator statsAggregator;
-	
-	@Autowired
-	private SvmFileCreator svmFileCreator;
 	
 	@Autowired
 	private NflTeamsCreator nflTeamsCreator;
@@ -126,15 +122,6 @@ public class StartWebBean implements Serializable {
 			statsAggregator.aggregateGamesForSeasons(2014, 2014, league);
 		} catch(Exception e) {
 			logger.info("Exception while aggregating stats", e);
-		}
-	}
-	
-	public void createSVMFiles() {
-		try {
-			svmFileCreator.createSVMFile(2010, 2011, "cfb", 3);
-			svmFileCreator.createSVMFile(2013, 2013, "cfb.t", 3);
-		} catch(Exception e) {
-			logger.info("Exception while creating SVM files", e);
 		}
 	}
 
