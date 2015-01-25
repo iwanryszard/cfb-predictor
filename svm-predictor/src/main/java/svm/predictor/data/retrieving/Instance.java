@@ -1,6 +1,7 @@
-package svm.predictor.weka.dto;
+package svm.predictor.data.retrieving;
 
 import java.util.List;
+
 
 public class Instance {
 

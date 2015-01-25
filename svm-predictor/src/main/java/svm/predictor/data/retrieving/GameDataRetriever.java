@@ -1,4 +1,4 @@
-package svm.predictor.libsvm.data.retrieving;
+package svm.predictor.data.retrieving;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -16,12 +16,11 @@ import org.springframework.stereotype.Service;
 import svm.predictor.dto.AggregatedGameStatsDto;
 import svm.predictor.dto.GameInfoDto;
 import svm.predictor.service.AggregatedGameStatsService;
-import svm.predictor.weka.dto.Instance;
 
 @Service("svmDataRetriever")
-public class SvmDataRetriever {
+public class GameDataRetriever {
 
-	private static Logger logger = LoggerFactory.getLogger(SvmDataRetriever.class);
+	private static Logger logger = LoggerFactory.getLogger(GameDataRetriever.class);
 	
 	@Autowired
 	private AggregatedGameStatsService aggregatedGameStatsService;
@@ -40,7 +39,7 @@ public class SvmDataRetriever {
 		return seasonEnd;
 	}
 	
-	public SvmDataDto getGamesAsSvmData(int startSeason, int endSeason, Integer minimumGamesPlayed, BaseDataRetriever dataRetriever) {
+	public GameDataDto getGameData(int startSeason, int endSeason, Integer minimumGamesPlayed, BaseDataRetriever dataRetriever) {
 		Date seasonStart = getSeasonStartDate(startSeason);
 		Date seasonEnd = getSeasonEndDate(endSeason);
 		
@@ -74,7 +73,7 @@ public class SvmDataRetriever {
 		logger.info("Labels size: {}", labels.size());
 		logger.info("Attributes per instance: {}", instances.get(0).getAttributes().size());
 		
-		SvmDataDto result = new SvmDataDto();
+		GameDataDto result = new GameDataDto();
 		result.setLabels(labels);
 		result.setInstances(instances);
 		result.setGamesOdds(gamesOdds);

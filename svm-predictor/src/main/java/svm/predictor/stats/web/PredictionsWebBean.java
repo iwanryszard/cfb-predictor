@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import svm.predictor.data.retrieving.GameOddsDto;
+import svm.predictor.data.retrieving.GameDataDto;
 import svm.predictor.libsvm.PredictionResultDto;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;
-import svm.predictor.libsvm.data.retrieving.GameOddsDto;
-import svm.predictor.libsvm.data.retrieving.SvmDataDto;
 
 @Component("predictionsWebBean")
 @Scope("view")
@@ -59,14 +59,14 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	public void trainModel() {
 		modelTrained = false;
 		scaleRestoreDto = null;
-		SvmDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		GameDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
 		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getAttributeNames().size() + " attributes each";
 		model = svmTrainer.trainModel(trainingData.getLabels(), trainingData.getInstances());
 		modelTrained = true;
 	}
 	
 	public void predict() {
-		SvmDataDto testingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		GameDataDto testingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
 		testingSummaryMsg = testingData.getLabels().size() + " games with " + testingData.getAttributeNames().size() + " attributes each";
 		PredictionResultDto predictionResult = svmPredictor.predict(testingData.getInstances(), model, null);
 		expectedResult = testingData.getLabels();

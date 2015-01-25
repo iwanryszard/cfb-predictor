@@ -1,4 +1,4 @@
-package svm.predictor.libsvm.data.retrieving;
+package svm.predictor.data.retrieving;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -13,8 +13,6 @@ import svm.predictor.dto.GameInfoDto;
 import svm.predictor.dto.League;
 import svm.predictor.dto.TeamAggregatedGameStatsDto;
 import svm.predictor.dto.TeamSimpleAggregatedStats;
-import svm.predictor.weka.dto.Attribute;
-import svm.predictor.weka.dto.Instance;
 
 public abstract class BaseDataRetriever {
 	

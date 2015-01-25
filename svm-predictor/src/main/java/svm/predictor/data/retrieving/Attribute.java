@@ -1,4 +1,4 @@
-package svm.predictor.weka.dto;
+package svm.predictor.data.retrieving;
 
 public class Attribute {
 

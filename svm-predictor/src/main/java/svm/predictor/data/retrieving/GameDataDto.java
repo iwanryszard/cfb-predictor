@@ -1,10 +1,9 @@
-package svm.predictor.libsvm.data.retrieving;
+package svm.predictor.data.retrieving;
 
 import java.util.List;
 
-import svm.predictor.weka.dto.Instance;
 
-public class SvmDataDto {
+public class GameDataDto {
 
 	private List<Double> labels;
 	private List<Instance> instances;

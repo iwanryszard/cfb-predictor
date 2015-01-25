@@ -2,7 +2,7 @@ package svm.predictor.libsvm.data.scaling;
 
 import java.util.List;
 
-import svm.predictor.weka.dto.Instance;
+import svm.predictor.data.retrieving.Instance;
 
 public class ScaleResultDto {
 	

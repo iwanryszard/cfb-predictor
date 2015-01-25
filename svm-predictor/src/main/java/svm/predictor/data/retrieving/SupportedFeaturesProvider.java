@@ -1,4 +1,4 @@
-package svm.predictor.libsvm.data.retrieving;
+package svm.predictor.data.retrieving;
 
 import java.util.List;
 

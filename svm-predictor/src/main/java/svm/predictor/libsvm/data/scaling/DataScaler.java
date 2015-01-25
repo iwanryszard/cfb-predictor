@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import svm.predictor.weka.dto.Attribute;
-import svm.predictor.weka.dto.Instance;
+import svm.predictor.data.retrieving.Attribute;
+import svm.predictor.data.retrieving.Instance;
 
 @Service("dataScaler")
 public class DataScaler {

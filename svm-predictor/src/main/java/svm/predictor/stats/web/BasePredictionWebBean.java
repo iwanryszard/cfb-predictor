@@ -6,15 +6,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import svm.predictor.libsvm.data.retrieving.BaseDataRetriever;
-import svm.predictor.libsvm.data.retrieving.CfbSupportedFeaturesProvider;
-import svm.predictor.libsvm.data.retrieving.MoneyLineDataRetriever;
-import svm.predictor.libsvm.data.retrieving.NflSupportedFeaturesProvider;
-import svm.predictor.libsvm.data.retrieving.PointSpreadDataRetriever;
-import svm.predictor.libsvm.data.retrieving.PointTotalDataRetriever;
-import svm.predictor.libsvm.data.retrieving.SupportedFeaturesProvider;
-import svm.predictor.libsvm.data.retrieving.SvmDataDto;
-import svm.predictor.libsvm.data.retrieving.SvmDataRetriever;
+import svm.predictor.data.retrieving.BaseDataRetriever;
+import svm.predictor.data.retrieving.CfbSupportedFeaturesProvider;
+import svm.predictor.data.retrieving.MoneyLineDataRetriever;
+import svm.predictor.data.retrieving.NflSupportedFeaturesProvider;
+import svm.predictor.data.retrieving.PointSpreadDataRetriever;
+import svm.predictor.data.retrieving.PointTotalDataRetriever;
+import svm.predictor.data.retrieving.SupportedFeaturesProvider;
+import svm.predictor.data.retrieving.GameDataDto;
+import svm.predictor.data.retrieving.GameDataRetriever;
 import svm.predictor.libsvm.data.scaling.DataScaler;
 import svm.predictor.libsvm.data.scaling.ScaleRestoreDto;
 import svm.predictor.libsvm.data.scaling.ScaleResultDto;
@@ -30,7 +30,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	protected DataScaler dataScaler;
 	
 	@Autowired
-	protected SvmDataRetriever svmDataRetriever;
+	protected GameDataRetriever gameDataRetriever;
 	
 	protected int leagueValue;
 	
@@ -76,9 +76,9 @@ public abstract class BasePredictionWebBean implements Serializable {
 		}
 	}
 	
-	protected SvmDataDto getGamesData(int startYear, int endYear, Integer minimumGamesPlayed, boolean scaleData, Double lower, Double upper) {
+	protected GameDataDto getGamesData(int startYear, int endYear, Integer minimumGamesPlayed, boolean scaleData, Double lower, Double upper) {
 		BaseDataRetriever dataRetriever = getDataRetriever();
-		SvmDataDto data = svmDataRetriever.getGamesAsSvmData(startYear, endYear, minimumGamesPlayed, dataRetriever);
+		GameDataDto data = gameDataRetriever.getGameData(startYear, endYear, minimumGamesPlayed, dataRetriever);
 		if(scaleData) {
 			ScaleResultDto scaledData = dataScaler.getScaledData(data.getLabels(), data.getInstances(), lower, upper, null, null, scaleRestoreDto);
 			scaleRestoreDto = scaledData.getScaleRestoreDto();

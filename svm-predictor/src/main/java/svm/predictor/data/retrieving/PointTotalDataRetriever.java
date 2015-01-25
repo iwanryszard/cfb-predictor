@@ -1,4 +1,4 @@
-package svm.predictor.libsvm.data.retrieving;
+package svm.predictor.data.retrieving;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,44 +6,44 @@ import java.util.Map;
 
 import svm.predictor.dto.GameInfoDto;
 
-public class PointSpreadDataRetriever extends BaseDataRetriever {
+public class PointTotalDataRetriever extends BaseDataRetriever {
 
-	public PointSpreadDataRetriever(SupportedFeaturesProvider supportedFeaturesProvider) {
+	public PointTotalDataRetriever(SupportedFeaturesProvider supportedFeaturesProvider) {
 		super(supportedFeaturesProvider);
 	}
 	
 	@Override
 	public Map<String, String> getSpecificParams() {
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("game.pointSpread:IS NOT", null);
+		params.put("game.pointTotal:IS NOT", null);
 		return params;
 	}
 
 	@Override
 	public Integer getLabel(GameInfoDto game) {
-		Integer label = ((game.getHomeTeamPoints() + game.getPointSpread()) >= 
-				game.getAwayTeamPoints()) ? 1 : -1;
+		Integer label = ((game.getHomeTeamPoints() + game.getAwayTeamPoints()) <= 
+				game.getPointTotal()) ? 1 : -1;
 		return label;
 	}
 	
 	@Override
 	protected List<String> getSimpleStatNames() {
 		List<String> result = super.getSimpleStatNames();
-		result.add("WinATSPct");
+		result.add("UnderPct");
 		return result;
 	}
 	
 	@Override
 	protected List<String> getAggregatedStatNames() {
 		List<String> result = super.getAggregatedStatNames();
-		result.add("WinATSPct");
+		result.add("UnderPct");
 		return result;
 	}
 	
 	@Override
 	protected List<String> getSpecificAttributesNames() {
 		List<String> result = super.getSpecificAttributesNames();
-		result.add("PointSpread");
+		result.add("PointTotal");
 		return result;
 	}
 }

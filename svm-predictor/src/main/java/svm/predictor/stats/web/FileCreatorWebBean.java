@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import svm.predictor.data.retrieving.GameDataDto;
 import svm.predictor.files.creator.BaseFileCreator;
-import svm.predictor.libsvm.data.retrieving.SvmDataDto;
 
 @Component("fileCreatorWebBean")
 @Scope("view")
@@ -41,7 +41,7 @@ public class FileCreatorWebBean extends BasePredictionWebBean {
 	
 	public void createTrainingFile() {
 		scaleRestoreDto = null;
-		SvmDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		GameDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
 		attributeNames = trainingData.getAttributeNames();
 		
 		BaseFileCreator fileCreator = getFileCreator();
@@ -49,7 +49,7 @@ public class FileCreatorWebBean extends BasePredictionWebBean {
 	}
 	
 	public void createTestingFile() {
-		SvmDataDto trainingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		GameDataDto trainingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
 		attributeNames = trainingData.getAttributeNames();
 		
 		BaseFileCreator fileCreator = getFileCreator();

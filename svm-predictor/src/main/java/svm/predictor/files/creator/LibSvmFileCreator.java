@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import svm.predictor.weka.dto.Attribute;
-import svm.predictor.weka.dto.Instance;
+import svm.predictor.data.retrieving.Attribute;
+import svm.predictor.data.retrieving.Instance;
 
 @Service("libSvmFileCreator")
 public class LibSvmFileCreator extends BaseFileCreator {
