@@ -13,7 +13,13 @@
   	<h:messages errorClass="errorMessage" showDetail="false" showSummary="true"/>
  	
  	<base-prediction:base-prediction bean="#{predictionsWebBean}" />
-			
+	
+	<p:panelGrid columns="2">
+ 		<h:outputText value="Classifier type:" /> 
+ 		<p:selectOneMenu id="fileType" value="#{predictionsWebBean.selectedClassifierType}">
+        	<f:selectItems value="#{predictionsWebBean.classifierTypes}" />
+    	</p:selectOneMenu>
+ 	</p:panelGrid>	
     <p:commandButton value="Train Model" id="trainModelButton" update="@form" 
     	actionListener="#{predictionsWebBean.trainModel}" />
     <h:outputText id="trainingSummary" value="#{predictionsWebBean.trainingSummaryMsg}" />

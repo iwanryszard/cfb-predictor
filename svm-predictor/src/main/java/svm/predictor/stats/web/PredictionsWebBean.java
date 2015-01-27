@@ -2,23 +2,17 @@ package svm.predictor.stats.web;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
 
-import libsvm.svm;
-import libsvm.svm_model;
-import libsvm.svm_parameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import svm.predictor.data.retrieving.GameOddsDto;
 import svm.predictor.data.retrieving.GameDataDto;
-import svm.predictor.libsvm.PredictionResultDto;
-import svm.predictor.libsvm.SvmPredictor;
-import svm.predictor.libsvm.SvmTrainer;
+import svm.predictor.data.retrieving.GameOddsDto;
+import svm.predictor.predictions.Classifier;
+import svm.predictor.predictions.ClassifierBuilder;
 
 @Component("predictionsWebBean")
 @Scope("view")
@@ -29,7 +23,11 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	 */
 	private static final long serialVersionUID = -1003232478601320283L;
 	
-	private static Logger logger = LoggerFactory.getLogger(PredictionsWebBean.class);
+	@Autowired
+	private ClassifierBuilder libSvmClassifierBuilder;
+	
+	@Autowired
+	private ClassifierBuilder wekaClassifierBuilder;
 	
 	private String resultMessage;
 	
@@ -46,64 +44,53 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	private List<Double> predictions;
 	private List<GameOddsDto> gamesOdds;
 	
-	private svm_model model;
-	
 	private boolean modelTrained;
 	
-	@Autowired
-	private SvmTrainer svmTrainer;
+	private Classifier classifier;
 	
-	@Autowired
-	private SvmPredictor svmPredictor;
+	private String selectedClassifierType;
+	private List<String> classifierTypes = Arrays.asList("libsvm", "wekaLibSVM", "wekaSMO", "wekaVotedPerceptron");
 	
 	public void trainModel() {
 		modelTrained = false;
 		scaleRestoreDto = null;
 		GameDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
 		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getAttributeNames().size() + " attributes each";
-		model = svmTrainer.trainModel(trainingData.getLabels(), trainingData.getInstances());
+		ClassifierBuilder classifierBuilder = getClassifierBuilder();
+		classifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType);
 		modelTrained = true;
+	}
+	
+	private ClassifierBuilder getClassifierBuilder() {
+		if(selectedClassifierType.startsWith("weka")) {
+			return wekaClassifierBuilder;
+		} else {
+			return libSvmClassifierBuilder;
+		}
 	}
 	
 	public void predict() {
 		GameDataDto testingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
 		testingSummaryMsg = testingData.getLabels().size() + " games with " + testingData.getAttributeNames().size() + " attributes each";
-		PredictionResultDto predictionResult = svmPredictor.predict(testingData.getInstances(), model, null);
+		List<Double> predictionResult = classifier.evaluate(testingData);
 		expectedResult = testingData.getLabels();
-		predictions = predictionResult.getPredictions();
+		predictions = predictionResult;
 		gamesOdds = testingData.getGamesOdds();
 
 		int correct = 0;
 		int total = 0;
-		double error = 0;
-		double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
 		for (int i = 0; i < predictions.size(); ++i) {
 			double v = predictions.get(i);
 			double target = expectedResult.get(i);
 			if (v == target) {
 				++correct;
 			}
-			error += (v - target) * (v - target);
-			sumv += v;
-			sumy += target;
-			sumvv += v * v;
-			sumyy += target * target;
-			sumvy += v * target;
 			++total;
 		}
-
-		int svm_type = svm.svm_get_svm_type(model);
-		if (svm_type == svm_parameter.EPSILON_SVR || svm_type == svm_parameter.NU_SVR) {
-			logger.info("Mean squared error = " + error / total + " (regression)\n");
-			logger.info("Squared correlation coefficient = "
-					+ ((total * sumvy - sumv * sumy) * (total * sumvy - sumv * sumy))
-					/ ((total * sumvv - sumv * sumv) * (total * sumyy - sumy * sumy)) + " (regression)\n");
-		} else {
-			NumberFormat formatter = new DecimalFormat("#0.00");
-			double accuracy = (double) correct / total * 100;
-			resultMessage = "Accuracy = " + formatter.format(accuracy) + "% (" + correct + "/" + total + ") (classification)";
-			logger.info(resultMessage);
-		}
+		
+		NumberFormat formatter = new DecimalFormat("#0.00");
+		double accuracy = (double) correct / total * 100;
+		resultMessage = "Accuracy = " + formatter.format(accuracy) + "% (" + correct + "/" + total + ") (classification)";
 	}
 	
 	public void computeStatsForStake() {
@@ -195,6 +182,22 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 
 	public void setRoiPct(Double roiPct) {
 		this.roiPct = roiPct;
+	}
+
+	public String getSelectedClassifierType() {
+		return selectedClassifierType;
+	}
+
+	public void setSelectedClassifierType(String selectedClassifierType) {
+		this.selectedClassifierType = selectedClassifierType;
+	}
+
+	public List<String> getClassifierTypes() {
+		return classifierTypes;
+	}
+
+	public void setClassifierTypes(List<String> classifierTypes) {
+		this.classifierTypes = classifierTypes;
 	}
 
 }

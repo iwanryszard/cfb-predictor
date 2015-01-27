@@ -49,11 +49,11 @@ public class FileCreatorWebBean extends BasePredictionWebBean {
 	}
 	
 	public void createTestingFile() {
-		GameDataDto trainingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
-		attributeNames = trainingData.getAttributeNames();
+		GameDataDto testingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+		attributeNames = testingData.getAttributeNames();
 		
 		BaseFileCreator fileCreator = getFileCreator();
-		fileCreator.createFile(fileLocation + "CFB-test", trainingData.getLabels(), trainingData.getInstances(), attributeNames);
+		fileCreator.createFile(fileLocation + "CFB-test", testingData.getLabels(), testingData.getInstances(), attributeNames);
 	}
 	
 	private BaseFileCreator getFileCreator() {
