@@ -9,7 +9,7 @@
   <h:head>
   	Predict
   </h:head>
-  <h:form prependId="false"> 
+  <h:form id="predictForm" prependId="false"> 
   	<h:messages errorClass="errorMessage" showDetail="false" showSummary="true"/>
  	
  	<base-prediction:base-prediction bean="#{predictionsWebBean}" />
@@ -21,16 +21,16 @@
     	</p:selectOneMenu>
  	</p:panelGrid>	
     <p:commandButton value="Train Model" id="trainModelButton" update="@form" 
-    	actionListener="#{predictionsWebBean.trainModel}" />
+    	actionListener="#{predictionsWebBean.trainModel}"/>
     <h:outputText id="trainingSummary" value="#{predictionsWebBean.trainingSummaryMsg}" />
  	
  	<br/>	
  	<p:commandButton value="Predict" id="predictButton" 
-         update="@form" actionListener="#{predictionsWebBean.predict}" disabled="#{not predictionsWebBean.modelTrained}"/>
+         update="@form" actionListener="#{predictionsWebBean.predict}" disabled="#{not predictionsWebBean.modelTrained}" />
     <h:outputText id="testingSummary" value="#{predictionsWebBean.testingSummaryMsg}" />
     <br/>
  	<h:outputText id="result" value="Result: #{predictionsWebBean.resultMessage}" style="font-weight:bold"/>
- 	<p:panelGrid columns="2">
+ 	<p:panelGrid id="computePanel" columns="2">
  		<h:outputText id="stake" value="Stake:"/>
  		<p:inputText id="stakeValue" value="#{predictionsWebBean.stakeValue}" />
  		<h:outputText id="totalStaked" value="Total Staked:"/>
@@ -51,6 +51,10 @@
  		</h:outputText>
  	</p:panelGrid>
  	<p:commandButton value="Compute" id="computeButton" 
-        actionListener="#{predictionsWebBean.computeStatsForStake}"/>
+        actionListener="#{predictionsWebBean.computeStatsForStake}" update="computePanel"/>
+        
+    <p:blockUI trigger="trainModelButton,predictButton" block="predictForm">   
+        <h:graphicImage library="images" name="ajax-loader.gif"  />   
+	</p:blockUI>  
   </h:form>
 </html>

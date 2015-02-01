@@ -9,7 +9,7 @@
   <h:head>
   	Create Files
   </h:head>
-  <h:form prependId="false"> 
+  <h:form id="fileForm" prependId="false"> 
   	<h:messages errorClass="errorMessage" showDetail="false" showSummary="true"/>
         
  	<base-prediction:base-prediction bean="#{fileCreatorWebBean}" />
@@ -28,5 +28,8 @@
     	actionListener="#{fileCreatorWebBean.createTrainingFile}" />
     <p:commandButton value="Create Testing File" id="testingFileButton" update="@form" 
     	actionListener="#{fileCreatorWebBean.createTestingFile}" />
+    <p:blockUI trigger="trainingFileButton,testingFileButton" block="fileForm">   
+        <h:graphicImage library="images" name="ajax-loader.gif"  />   
+	</p:blockUI>  
   </h:form>
 </html>

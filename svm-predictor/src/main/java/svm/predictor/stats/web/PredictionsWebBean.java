@@ -49,7 +49,8 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	private Classifier classifier;
 	
 	private String selectedClassifierType;
-	private List<String> classifierTypes = Arrays.asList("libsvm", "wekaLibSVM", "wekaSMO", "wekaVotedPerceptron");
+	private List<String> classifierTypes = Arrays.asList("libsvm", "wekaLibSVM", "wekaSMO", "wekaVotedPerceptron", 
+			"wekaNaiveBayes", "wekaJ48");
 	
 	public void trainModel() {
 		modelTrained = false;

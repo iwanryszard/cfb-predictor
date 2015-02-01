@@ -27,6 +27,8 @@ public class WekaClassifierBuilder implements ClassifierBuilder {
 		classifierTypeToClass.put("wekaLibSVM", "weka.classifiers.functions.LibSVM");
 		classifierTypeToClass.put("wekaSMO", "weka.classifiers.functions.SMO");
 		classifierTypeToClass.put("wekaVotedPerceptron", "weka.classifiers.functions.VotedPerceptron");
+		classifierTypeToClass.put("wekaNaiveBayes", "weka.classifiers.bayes.NaiveBayes");
+		classifierTypeToClass.put("wekaJ48", "weka.classifiers.trees.J48");
 	}
 	
 	@Override
