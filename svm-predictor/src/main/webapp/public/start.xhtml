@@ -7,13 +7,20 @@
       xmlns:f="http://java.sun.com/jsf/core"
       >
   <h:head>
-  	Start
+  	Stats
   </h:head>
-  <h:form> 
+  <h:form id="statsForm" prependId="false"> 
  	<p:selectOneMenu id="leagues" value="#{startWebBean.leagueValue}">
        <f:selectItem itemLabel="CFB" itemValue="0" />
        <f:selectItem itemLabel="NFL" itemValue="1" />
     </p:selectOneMenu>
+    <p:panelGrid columns="2">
+ 		<h:outputText value="Start season" /> 
+ 		<h:outputText value="End season" /> 
+ 		<p:inputText id="startSeason" value="#{startWebBean.startYear}" required="true"/>
+ 		<p:inputText id="endSeason" value="#{startWebBean.endYear}" required="true"/>
+ 	</p:panelGrid>
+ 	
  	<p:commandButton value="Stats" id="statsButton" update="@form" actionListener="#{startWebBean.getStats}"/>
  	<p:commandButton value="Spreads" id="spreadsButton" update="@form" actionListener="#{startWebBean.getSpreads}"/>
  	<p:commandButton value="Point Totals" id="totalsButton" update="@form" actionListener="#{startWebBean.getPointTotals}"/>
@@ -21,5 +28,9 @@
  	<p:commandButton value="Teams" id="teamsButton" update="@form" actionListener="#{startWebBean.getTeams}"/>
  	<p:commandButton value="Distances" id="distancesButton" update="@form" actionListener="#{startWebBean.getDistances}"/>
  	<p:commandButton value="AggregateStats" id="aggregateButton" update="@form" actionListener="#{startWebBean.aggregateGameStats}"/>
+ 	
+ 	<p:blockUI trigger="statsButton, spreadsButton, totalsButton, moneyLinesButton, teamsButton, distancesButton, aggregateButton" block="statsForm">   
+        <h:graphicImage library="images" name="ajax-loader.gif"  />   
+	</p:blockUI>  
   </h:form>
 </html>

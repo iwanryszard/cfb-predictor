@@ -58,8 +58,9 @@ public class NflWeekStatsScraper {
 			
 				Elements rowCells = row.select("td");
 				Elements gameLink = rowCells.get(0).select("a[href]");
+				Element tvTickets = rowCells.get(2);
 				String link = "";
-				if( !gameLink.isEmpty()) {
+				if( !gameLink.isEmpty() && !"Postponed".equals(tvTickets.text())) {
 					link = gameLink.attr("abs:href");
 					currentGame = getGameInfo(link, teamMap);
 					currentGame.setLeague(League.NFL);
@@ -289,9 +290,6 @@ public class NflWeekStatsScraper {
 			}
 		}
 		
-		if(result == null) {
-			System.out.println("Table not found for " + teamName + " " + componentName);
-		}
 		return result;
 	}
 	

@@ -27,9 +27,7 @@ public class NflStatsScraper {
 	@Autowired
 	private GameInfoService gameInfoService;
 	
-	public void createAllSeasonStats() {
-		int startYear = 2009;
-		int endYear = 2013;
+	public void createAllSeasonStats(int startYear, int endYear) {
 		
 		Map<String, Integer> teamMap = teamService.getNameToIdMap(League.NFL);
 		List<GameInfoDto> gamesForWeek = null;

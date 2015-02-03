@@ -1,7 +1,6 @@
 package svm.predictor.stats.aggregation;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,19 +18,21 @@ import svm.predictor.dto.TeamAggregatedGameStatsDto;
 import svm.predictor.dto.TeamSimpleAggregatedStats;
 import svm.predictor.service.AggregatedGameStatsService;
 import svm.predictor.service.GameInfoService;
+import svm.predictor.utils.SeasonBoundariesProvider;
 
 @Service("statsAggregator")
 public class StatsAggregator {
 
 	private static Logger logger = LoggerFactory.getLogger(StatsAggregator.class);
 	
-	private static Calendar calendar = Calendar.getInstance();
-	
 	@Autowired
 	private GameInfoService gameInfoService;
 	
 	@Autowired
 	private AggregatedGameStatsService aggregatedGameStatsService;
+	
+	@Autowired
+	private SeasonBoundariesProvider seasonBoundariesProvider;
 	
 	public void aggregateGamesForSeasons(int startSeason, int endSeason, League league) {
 		for(int season = startSeason; season <= endSeason; ++season) {
@@ -42,11 +43,11 @@ public class StatsAggregator {
 	private void aggregateGamesForSeason(int season, League league) {
 		logger.info("Starting aggregation for season: {}", season);
 		
-		Date seasonStart = getSeasonStartDate(season);
-		Date seasonEnd = getSeasonEndDate(season);
+		Date seasonStart = seasonBoundariesProvider.getSeasonStartDate(season);
+		Date seasonEnd = seasonBoundariesProvider.getSeasonEndDate(season);
 		
-		Date lastSeasonStart = getSeasonStartDate(season - 1);
-		Date lastSeasonEnd = getSeasonEndDate(season - 1);
+		Date lastSeasonStart = seasonBoundariesProvider.getSeasonStartDate(season - 1);
+		Date lastSeasonEnd = seasonBoundariesProvider.getSeasonEndDate(season - 1);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("homeTeamId:<>", -1);
@@ -101,17 +102,5 @@ public class StatsAggregator {
 		
 		aggregatedGameStatsService.createAggregations(aggregatedStats);
 		logger.info("Persisted aggregations for season: {}", season);
-	}
-	
-	private Date getSeasonStartDate(int season) {
-		calendar.set(season, Calendar.AUGUST, 15);
-		Date seasonStart = calendar.getTime();
-		return seasonStart;
-	}
-	
-	private Date getSeasonEndDate(int season) {
-		calendar.set(season + 1, Calendar.FEBRUARY, 20);
-		Date seasonEnd = calendar.getTime();
-		return seasonEnd;
 	}
 }

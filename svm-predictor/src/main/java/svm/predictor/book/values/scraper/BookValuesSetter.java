@@ -1,6 +1,5 @@
 package svm.predictor.book.values.scraper;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +15,7 @@ import svm.predictor.dto.League;
 import svm.predictor.service.GameInfoService;
 import svm.predictor.service.TeamService;
 import svm.predictor.service.impl.DocumentGetter;
+import svm.predictor.utils.SeasonBoundariesProvider;
 
 @Service("bookValuesSetter")
 public class BookValuesSetter {
@@ -37,12 +37,12 @@ public class BookValuesSetter {
 	@Autowired
 	private DocumentGetter documentGetter;
 	
-	public void setAllGamesBookValues(BookValueScraper bookValueScraper) {
+	@Autowired
+	private SeasonBoundariesProvider seasonBoundariesProvider;
+	
+	public void setAllGamesBookValues(BookValueScraper bookValueScraper, int startYear) {
 		League league = bookValueScraper.getLeague();
-		//TODO this is temporary hack to get the games for the 2014 season
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(2014, Calendar.AUGUST, 15);
-		Date startDate = calendar.getTime();
+		Date startDate = seasonBoundariesProvider.getSeasonStartDate(startYear);
 		List<Date> gameDates = gameInfoService.getAllGameDates(league, startDate);
 		Map<Integer, String> teamMap = teamService.getTeamNamesMap(league);
 		

@@ -2,7 +2,6 @@ package svm.predictor.data.retrieving;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import svm.predictor.dto.AggregatedGameStatsDto;
 import svm.predictor.dto.GameInfoDto;
 import svm.predictor.service.AggregatedGameStatsService;
+import svm.predictor.utils.SeasonBoundariesProvider;
 
 @Service("svmDataRetriever")
 public class GameDataRetriever {
@@ -25,23 +25,12 @@ public class GameDataRetriever {
 	@Autowired
 	private AggregatedGameStatsService aggregatedGameStatsService;
 	
-	private static Calendar calendar = Calendar.getInstance();
-	
-	private Date getSeasonStartDate(int season) {
-		calendar.set(season, Calendar.AUGUST, 15);
-		Date seasonStart = calendar.getTime();
-		return seasonStart;
-	}
-	
-	private Date getSeasonEndDate(int season) {
-		calendar.set(season + 1, Calendar.FEBRUARY, 20);
-		Date seasonEnd = calendar.getTime();
-		return seasonEnd;
-	}
+	@Autowired
+	private SeasonBoundariesProvider seasonBoundariesProvider;
 	
 	public GameDataDto getGameData(int startSeason, int endSeason, Integer minimumGamesPlayed, BaseDataRetriever dataRetriever) {
-		Date seasonStart = getSeasonStartDate(startSeason);
-		Date seasonEnd = getSeasonEndDate(endSeason);
+		Date seasonStart = seasonBoundariesProvider.getSeasonStartDate(startSeason);
+		Date seasonEnd = seasonBoundariesProvider.getSeasonEndDate(endSeason);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("game.gameDate:>", seasonStart);

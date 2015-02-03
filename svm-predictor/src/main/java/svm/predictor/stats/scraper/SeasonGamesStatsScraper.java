@@ -35,9 +35,7 @@ public class SeasonGamesStatsScraper {
 	@Value("${cfb.stats.root.url}")
 	private String cfbStatsRootURL;
 	
-	public void createAllSeasonStats() {
-		int startYear = 2014;
-		int endYear = 2014;
+	public void createAllSeasonStats(int startYear, int endYear) {
 		
 		Map<Integer, String> teamMap = teamService.getTeamNamesMap(League.CFB);
 		

@@ -35,7 +35,7 @@ public class StartWebBean implements Serializable {
 	private SeasonGamesStatsScraper seasonGamesStatsScraper;
 	
 	@Autowired
-	private BookValuesSetter pointSpreadsSetter;
+	private BookValuesSetter bookValuesSetter;
 	
 	@Autowired
 	private TeamsStadiumLocationsSetter teamsStadiumLocationsSetter;
@@ -54,13 +54,16 @@ public class StartWebBean implements Serializable {
 	
 	private int leagueValue;
 	
+	private int startYear;
+	private int endYear;
+	
 	public void getStats() {
 		try {
 			League league = getLeague();
 			if(league.equals(League.CFB)) {
-				seasonGamesStatsScraper.createAllSeasonStats();
+				seasonGamesStatsScraper.createAllSeasonStats(startYear, endYear);
 			} else if(league.equals(League.NFL)) {
-				nflStatsScraper.createAllSeasonStats();
+				nflStatsScraper.createAllSeasonStats(startYear, endYear);
 			}
 		} catch(Exception e) {
 			logger.info("Exception while getting game stats", e);
@@ -70,7 +73,7 @@ public class StartWebBean implements Serializable {
 	public void getSpreads() {
 		try {
 			League league = getLeague();
-			pointSpreadsSetter.setAllGamesBookValues(new PointSpreadScraper(league));
+			bookValuesSetter.setAllGamesBookValues(new PointSpreadScraper(league), startYear);
 		} catch(Exception e) {
 			logger.info("Exception while setting spreads", e);
 		}
@@ -79,7 +82,7 @@ public class StartWebBean implements Serializable {
 	public void getPointTotals() {
 		try {
 			League league = getLeague();
-			pointSpreadsSetter.setAllGamesBookValues(new PointTotalScraper(league));
+			bookValuesSetter.setAllGamesBookValues(new PointTotalScraper(league), startYear);
 		} catch(Exception e) {
 			logger.info("Exception while setting point totals", e);
 		}
@@ -88,7 +91,7 @@ public class StartWebBean implements Serializable {
 	public void getMoneyLineOdds() {
 		try {
 			League league = getLeague();
-			pointSpreadsSetter.setAllGamesBookValues(new MoneyLineOddsScraper(league));
+			bookValuesSetter.setAllGamesBookValues(new MoneyLineOddsScraper(league), startYear);
 		} catch(Exception e) {
 			logger.info("Exception while setting money lines", e);
 		}
@@ -119,7 +122,7 @@ public class StartWebBean implements Serializable {
 	public void aggregateGameStats() {
 		try {
 			League league = getLeague();
-			statsAggregator.aggregateGamesForSeasons(2014, 2014, league);
+			statsAggregator.aggregateGamesForSeasons(startYear, endYear, league);
 		} catch(Exception e) {
 			logger.info("Exception while aggregating stats", e);
 		}
@@ -139,5 +142,21 @@ public class StartWebBean implements Serializable {
 		} else {
 			return League.NFL;
 		}
+	}
+
+	public int getStartYear() {
+		return startYear;
+	}
+
+	public void setStartYear(int startYear) {
+		this.startYear = startYear;
+	}
+
+	public int getEndYear() {
+		return endYear;
+	}
+
+	public void setEndYear(int endYear) {
+		this.endYear = endYear;
 	}
 }
