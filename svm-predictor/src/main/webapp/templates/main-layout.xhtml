@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      >
+ 
+    <h:head>
+		
+	</h:head>
+	
+	<h:body>
+		<h:form id="mainForm" prependId="false">
+		<p:menubar>
+        	<p:submenu label="Stats">
+             	<p:menuitem value="Scraping" url="start.jsf" />
+        	</p:submenu>
+        	<p:submenu label="Predictions">
+            	<p:menuitem value="Predict" url="predict.jsf" />
+       	 	</p:submenu>
+        	<p:submenu label="Files">
+            	<p:menuitem value="Create" url="createFiles.jsf" />
+        	</p:submenu>
+        </p:menubar>
+        </h:form>
+        
+		<ui:insert name="content">Default Content</ui:insert>
+		
+	</h:body>
+</html>
