@@ -18,7 +18,7 @@
 	
 	<p:panelGrid columns="2">
  		<h:outputText value="Classifier type:" /> 
- 		<p:selectOneMenu id="fileType" value="#{predictionsWebBean.selectedClassifierType}">
+ 		<p:selectOneMenu id="classifierType" value="#{predictionsWebBean.selectedClassifierType}" styleClass="attribute">
         	<f:selectItems value="#{predictionsWebBean.classifierTypes}" />
     	</p:selectOneMenu>
  	</p:panelGrid>	
@@ -31,7 +31,8 @@
          update="@form" actionListener="#{predictionsWebBean.predict}" disabled="#{not predictionsWebBean.modelTrained}" />
     <h:outputText id="testingSummary" value="#{predictionsWebBean.testingSummaryMsg}" />
     <br/>
- 	<h:outputText id="result" value="Result: #{predictionsWebBean.resultMessage}" style="font-weight:bold"/>
+ 	<h:outputText id="result" value="Result: #{predictionsWebBean.resultMessage}" rendered="#{not predictionsWebBean.attributeEnabled}" styleClass="attribute"/>
+ 	<h:outputText id="regressionResult" value="Result: #{predictionsWebBean.regressionResultMessage}" rendered="#{predictionsWebBean.attributeEnabled}" styleClass="attribute"/>
  	<p:panelGrid id="computePanel" columns="2">
  		<h:outputText id="stake" value="Stake:"/>
  		<p:inputText id="stakeValue" value="#{predictionsWebBean.stakeValue}" />
@@ -53,7 +54,7 @@
  		</h:outputText>
  	</p:panelGrid>
  	<p:commandButton value="Compute" id="computeButton" 
-        actionListener="#{predictionsWebBean.computeStatsForStake}" update="computePanel"/>
+        actionListener="#{predictionsWebBean.computeStatsForStake}" update="computePanel" disabled="#{predictionsWebBean.attributeEnabled}" styleClass="attribute"/>
         
     <p:blockUI trigger="trainModelButton,predictButton" block="predictForm">   
         <h:graphicImage library="images" name="ajax-loader.gif"  />   

@@ -21,6 +21,16 @@
     
   		<p:selectOneMenu id="predictionType" value="#{cc.attrs.bean.selectedPredictionType}">
         	<f:selectItems value="#{cc.attrs.bean.predictionTypes}" />
+        	<p:ajax listener="#{cc.attrs.bean.predictionTypeChanged()}" update="@(.attribute)" />
+    	</p:selectOneMenu>
+    	
+    	<p:selectOneMenu id="attributeHomeAway" value="#{cc.attrs.bean.homeAway}" styleClass="attribute" disabled="#{ !cc.attrs.bean.attributeEnabled}">
+       		<f:selectItem itemLabel="Home" itemValue="home" />
+       		<f:selectItem itemLabel="Away" itemValue="away" />
+    	</p:selectOneMenu>
+    	
+    	<p:selectOneMenu id="attributeSelector" value="#{cc.attrs.bean.selectedAttribute}" styleClass="attribute" disabled="#{ !cc.attrs.bean.attributeEnabled}">
+       		<f:selectItems value="#{cc.attrs.bean.attributeNames}" />
     	</p:selectOneMenu>
         
  		<p:panelGrid columns="2">

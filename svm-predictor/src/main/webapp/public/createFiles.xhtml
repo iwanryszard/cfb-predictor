@@ -18,7 +18,7 @@
  	
  	<p:panelGrid columns="2">
  		<h:outputText value="File type:" /> 
- 		<p:selectOneMenu id="fileType" value="#{fileCreatorWebBean.selectedFileType}">
+ 		<p:selectOneMenu id="fileType" value="#{fileCreatorWebBean.selectedFileType}" styleClass="attribute">
         	<f:selectItems value="#{fileCreatorWebBean.fileTypes}" />
         	<p:ajax listener="#{fileCreatorWebBean.fileTypeChanged()}" update="filesLocation" />
     	</p:selectOneMenu>

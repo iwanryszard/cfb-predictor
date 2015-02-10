@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.data.retrieving.GameDataDto;
+import svm.predictor.dto.LearningCategory;
 import svm.predictor.weka.integration.WekaInstanceBuilder;
 import weka.core.Instances;
 
@@ -29,12 +30,13 @@ public class WekaClassifierBuilder implements ClassifierBuilder {
 		classifierTypeToClass.put("wekaVotedPerceptron", "weka.classifiers.functions.VotedPerceptron");
 		classifierTypeToClass.put("wekaNaiveBayes", "weka.classifiers.bayes.NaiveBayes");
 		classifierTypeToClass.put("wekaJ48", "weka.classifiers.trees.J48");
+		classifierTypeToClass.put("wekaLinearRegression", "weka.classifiers.functions.LinearRegression");
 	}
 	
 	@Override
-	public Classifier buildClassifier(GameDataDto gamesData, String classifierType) {
+	public Classifier buildClassifier(GameDataDto gamesData, String classifierType, LearningCategory learningCategory) {
 		weka.classifiers.Classifier classifier = getClassifierForType(classifierType);
-		Instances instances = wekaInstanceBuilder.buildInstances(gamesData);
+		Instances instances = wekaInstanceBuilder.buildInstances(gamesData, learningCategory);
 		try {
 			classifier.buildClassifier(instances);
 		} catch (Exception e) {
@@ -42,7 +44,7 @@ public class WekaClassifierBuilder implements ClassifierBuilder {
 			throw new RuntimeException("Could not build classifier", e);
 		}
 		
-		return new WekaClassifier(classifier, wekaInstanceBuilder, instances);
+		return new WekaClassifier(classifier, wekaInstanceBuilder, instances, learningCategory);
 	}
 	
 	private weka.classifiers.Classifier getClassifierForType(String classifierType) {

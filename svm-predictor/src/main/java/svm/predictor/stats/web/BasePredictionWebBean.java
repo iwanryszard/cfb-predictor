@@ -1,20 +1,27 @@
 package svm.predictor.stats.web;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import svm.predictor.data.retrieving.AttributeDataRetriever;
 import svm.predictor.data.retrieving.BaseDataRetriever;
 import svm.predictor.data.retrieving.CfbSupportedFeaturesProvider;
+import svm.predictor.data.retrieving.GameDataDto;
+import svm.predictor.data.retrieving.GameDataRetriever;
 import svm.predictor.data.retrieving.MoneyLineDataRetriever;
 import svm.predictor.data.retrieving.NflSupportedFeaturesProvider;
 import svm.predictor.data.retrieving.PointSpreadDataRetriever;
 import svm.predictor.data.retrieving.PointTotalDataRetriever;
 import svm.predictor.data.retrieving.SupportedFeaturesProvider;
-import svm.predictor.data.retrieving.GameDataDto;
-import svm.predictor.data.retrieving.GameDataRetriever;
+import svm.predictor.dto.LearningCategory;
+import svm.predictor.dto.TeamGameStatsDto;
 import svm.predictor.libsvm.data.scaling.DataScaler;
 import svm.predictor.libsvm.data.scaling.ScaleRestoreDto;
 import svm.predictor.libsvm.data.scaling.ScaleResultDto;
@@ -36,7 +43,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	
 	protected ScaleRestoreDto scaleRestoreDto;
 	
-	protected List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Money Line");
+	protected List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Money Line", "Attribute");
 	
 	protected String selectedPredictionType;
 	
@@ -52,6 +59,20 @@ public abstract class BasePredictionWebBean implements Serializable {
 	protected Double lower = -1.0;
 	protected Double upper = 1.0;
 	
+	protected List<String> attributeNames;
+	protected String selectedAttribute;
+	protected String homeAway;
+	protected boolean attributeEnabled;
+	
+	@PostConstruct
+	public void postConstruct() {
+		Field[] attributeFields = TeamGameStatsDto.class.getDeclaredFields();
+		attributeNames = new ArrayList<String>(attributeFields.length);
+		for(Field field : attributeFields) {
+			attributeNames.add(field.getName());
+		}
+	}
+	
 	private BaseDataRetriever getDataRetriever() {
 		BaseDataRetriever result = null;
 		SupportedFeaturesProvider featureProvider = getSupportedFeaturesProvider();
@@ -61,6 +82,8 @@ public abstract class BasePredictionWebBean implements Serializable {
 			result = new PointTotalDataRetriever(featureProvider);
 		} else if(selectedPredictionType.equals("Money Line")) {
 			result = new MoneyLineDataRetriever(featureProvider);
+		} else if(selectedPredictionType.equals("Attribute")) {
+			result = new AttributeDataRetriever(featureProvider, homeAway + selectedAttribute);
 		} else {
 			result = new PointSpreadDataRetriever(featureProvider);
 		}
@@ -87,6 +110,14 @@ public abstract class BasePredictionWebBean implements Serializable {
 		}
 		
 		return data;
+	}
+	
+	protected LearningCategory getLearningCategory() {
+		if("Attribute".equals(selectedPredictionType)) {
+			return LearningCategory.REGRESSION;
+		} else {
+			return LearningCategory.CLASSIFICATION;
+		}
 	}
 
 	public int getLeagueValue() {
@@ -175,6 +206,42 @@ public abstract class BasePredictionWebBean implements Serializable {
 
 	public void setUpper(Double upper) {
 		this.upper = upper;
+	}
+	
+	public void predictionTypeChanged() {
+		attributeEnabled = "Attribute".equals(selectedPredictionType);
+	}
+
+	public List<String> getAttributeNames() {
+		return attributeNames;
+	}
+
+	public void setAttributeNames(List<String> attributeNames) {
+		this.attributeNames = attributeNames;
+	}
+
+	public String getSelectedAttribute() {
+		return selectedAttribute;
+	}
+
+	public void setSelectedAttribute(String selectedAttribute) {
+		this.selectedAttribute = selectedAttribute;
+	}
+
+	public String getHomeAway() {
+		return homeAway;
+	}
+
+	public void setHomeAway(String homeAway) {
+		this.homeAway = homeAway;
+	}
+
+	public boolean getAttributeEnabled() {
+		return attributeEnabled;
+	}
+
+	public void setAttributeEnabled(boolean attributeEnabled) {
+		this.attributeEnabled = attributeEnabled;
 	}
 
 }

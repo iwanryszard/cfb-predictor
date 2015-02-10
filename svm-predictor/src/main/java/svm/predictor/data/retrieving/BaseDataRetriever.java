@@ -26,7 +26,7 @@ public abstract class BaseDataRetriever {
 
 	public abstract Map<String, String> getSpecificParams();
 	
-	public abstract Integer getLabel(GameInfoDto game);
+	public abstract Double getLabel(GameInfoDto game);
 	
 	private void addStats(Object stats, List<String> statNames, List<Attribute> attributes) {
 		Class<?> statsClass = stats.getClass();

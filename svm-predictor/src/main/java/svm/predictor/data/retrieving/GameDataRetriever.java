@@ -50,8 +50,8 @@ public class GameDataRetriever {
 		List<String> attributeNames = dataRetriever.getAttributeNames();
 		for(AggregatedGameStatsDto aggregatedGame : aggregatedGames) {
 			GameInfoDto currentGame = aggregatedGame.getGame();
-			Integer currentLabel = dataRetriever.getLabel(currentGame);
-			labels.add(currentLabel.doubleValue());
+			Double currentLabel = dataRetriever.getLabel(currentGame);
+			labels.add(currentLabel);
 			
 			Instance instance = dataRetriever.getInstance(aggregatedGame);
 			instances.add(instance);

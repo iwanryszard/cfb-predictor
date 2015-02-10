@@ -20,9 +20,9 @@ public class PointTotalDataRetriever extends BaseDataRetriever {
 	}
 
 	@Override
-	public Integer getLabel(GameInfoDto game) {
-		Integer label = ((game.getHomeTeamPoints() + game.getAwayTeamPoints()) <= 
-				game.getPointTotal()) ? 1 : -1;
+	public Double getLabel(GameInfoDto game) {
+		Double label = ((game.getHomeTeamPoints() + game.getAwayTeamPoints()) <= 
+				game.getPointTotal()) ? 1.0 : -1.0;
 		return label;
 	}
 	

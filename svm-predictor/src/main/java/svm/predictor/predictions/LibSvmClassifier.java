@@ -18,9 +18,22 @@ public class LibSvmClassifier implements Classifier {
 	}
 	
 	@Override
-	public List<Double> evaluate(GameDataDto gamesData) {
+	public EvaluationResultDto evaluate(GameDataDto gamesData) {
 		PredictionResultDto predictionResult = svmPredictor.predict(gamesData.getInstances(), model, null);
-		return predictionResult.getPredictions();
+		EvaluationResultDto result = new EvaluationResultDto();
+		List<Double> predictions = predictionResult.getPredictions();
+		List<Double> expectedResult = gamesData.getLabels();
+		int correct = 0;
+		for (int i = 0; i < predictions.size(); ++i) {
+			double v = predictions.get(i);
+			double target = expectedResult.get(i);
+			if (v == target) {
+				++correct;
+			}
+		}
+		result.setPredictions(predictionResult.getPredictions());
+		result.setCorrect(correct);
+		return result;
 	}
 
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import svm.predictor.data.retrieving.GameDataDto;
+import svm.predictor.dto.LearningCategory;
 import svm.predictor.libsvm.SvmPredictor;
 import svm.predictor.libsvm.SvmTrainer;
 
@@ -19,7 +20,7 @@ public class LibSvmClassifierBuilder implements ClassifierBuilder {
 	private SvmPredictor svmPredictor;
 	
 	@Override
-	public Classifier buildClassifier(GameDataDto gamesData, String classifierType) {
+	public Classifier buildClassifier(GameDataDto gamesData, String classifierType, LearningCategory learningCategory) {
 		svm_model model = svmTrainer.trainModel(gamesData.getLabels(), gamesData.getInstances());
 		return new LibSvmClassifier(model, svmPredictor);
 	}

@@ -20,9 +20,9 @@ public class PointSpreadDataRetriever extends BaseDataRetriever {
 	}
 
 	@Override
-	public Integer getLabel(GameInfoDto game) {
-		Integer label = ((game.getHomeTeamPoints() + game.getPointSpread()) >= 
-				game.getAwayTeamPoints()) ? 1 : -1;
+	public Double getLabel(GameInfoDto game) {
+		Double label = ((game.getHomeTeamPoints() + game.getPointSpread()) >= 
+				game.getAwayTeamPoints()) ? 1.0 : -1.0;
 		return label;
 	}
 	

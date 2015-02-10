@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import svm.predictor.data.retrieving.GameDataDto;
+import svm.predictor.dto.LearningCategory;
 import svm.predictor.files.creator.BaseFileCreator;
 
 @Component("fileCreatorWebBean")
@@ -30,7 +31,8 @@ public class FileCreatorWebBean extends BasePredictionWebBean {
 	private BaseFileCreator libSvmFileCreator;
 	
 	private String fileLocation;
-	private List<String> fileTypes = Arrays.asList("Weka", "libsvm");
+	private List<String> allFileTypes = Arrays.asList("Weka", "libsvm");
+	private List<String> fileTypes = allFileTypes;
 	private String selectedFileType;
 	
 	@PostConstruct
@@ -45,7 +47,8 @@ public class FileCreatorWebBean extends BasePredictionWebBean {
 		attributeNames = trainingData.getAttributeNames();
 		
 		BaseFileCreator fileCreator = getFileCreator();
-		fileCreator.createFile(fileLocation + "CFB-train", trainingData.getLabels(), trainingData.getInstances(), attributeNames);
+		LearningCategory learningCategory = getLearningCategory();
+		fileCreator.createFile(fileLocation + "CFB-train", trainingData.getLabels(), trainingData.getInstances(), attributeNames, learningCategory);
 	}
 	
 	public void createTestingFile() {
@@ -53,7 +56,8 @@ public class FileCreatorWebBean extends BasePredictionWebBean {
 		attributeNames = testingData.getAttributeNames();
 		
 		BaseFileCreator fileCreator = getFileCreator();
-		fileCreator.createFile(fileLocation + "CFB-test", testingData.getLabels(), testingData.getInstances(), attributeNames);
+		LearningCategory learningCategory = getLearningCategory();
+		fileCreator.createFile(fileLocation + "CFB-test", testingData.getLabels(), testingData.getInstances(), attributeNames, learningCategory);
 	}
 	
 	private BaseFileCreator getFileCreator() {
@@ -92,6 +96,16 @@ public class FileCreatorWebBean extends BasePredictionWebBean {
 	
 	public void fileTypeChanged() {
 		setFileLocation();
+	}
+	
+	@Override
+	public void predictionTypeChanged() {
+		super.predictionTypeChanged();
+		if(attributeEnabled) {
+			fileTypes = Arrays.asList("Weka");
+		} else {
+			fileTypes = allFileTypes;
+		}
 	}
 	
 }

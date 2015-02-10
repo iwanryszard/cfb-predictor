@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import svm.predictor.data.retrieving.Attribute;
 import svm.predictor.data.retrieving.Instance;
+import svm.predictor.dto.LearningCategory;
 
 @Service("wekaFileCreator")
 public class WekaFileCreator extends BaseFileCreator {
@@ -16,14 +17,26 @@ public class WekaFileCreator extends BaseFileCreator {
 	}
 
 	@Override
-	protected StringBuilder getHeader(List<String> attributeNames) {
+	protected StringBuilder getHeader(List<String> attributeNames, LearningCategory learningCategory) {
 		StringBuilder result = new StringBuilder();
 		result.append("@RELATION CFB\n\n");
 		
 		for(String attribute : attributeNames) {
 			result.append("@ATTRIBUTE " + attribute + " NUMERIC\n");
 		}
-		result.append("@ATTRIBUTE class {1,-1}\n");
+		String classType = getClassType(learningCategory);
+		result.append("@ATTRIBUTE class " + classType + "\n");
+		
+		return result;
+	}
+	
+	private String getClassType(LearningCategory learningCategory) {
+		String result = "";
+		if(LearningCategory.CLASSIFICATION.equals(learningCategory)) {
+			result =  "{1,-1}";
+		} else {
+			result = "NUMERIC"; 
+		}
 		
 		return result;
 	}
