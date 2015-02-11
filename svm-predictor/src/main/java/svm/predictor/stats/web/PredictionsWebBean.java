@@ -5,7 +5,6 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +23,6 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	 * 
 	 */
 	private static final long serialVersionUID = -1003232478601320283L;
-	
-	@Autowired
-	private ClassifierBuilder libSvmClassifierBuilder;
-	
-	@Autowired
-	private ClassifierBuilder wekaClassifierBuilder;
 	
 	private String resultMessage;
 	private String regressionResultMessage;
@@ -62,18 +55,10 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		scaleRestoreDto = null;
 		GameDataDto trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
 		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getAttributeNames().size() + " attributes each";
-		ClassifierBuilder classifierBuilder = getClassifierBuilder();
 		LearningCategory learningCategory = getLearningCategory();
-		classifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType, learningCategory);
+		ClassifierBuilder classifierBuilder = learningFactory.getClassifierBuilder(selectedClassifierType, learningCategory);
+		classifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType);
 		modelTrained = true;
-	}
-	
-	private ClassifierBuilder getClassifierBuilder() {
-		if(selectedClassifierType.startsWith("weka")) {
-			return wekaClassifierBuilder;
-		} else {
-			return libSvmClassifierBuilder;
-		}
 	}
 	
 	public void predict() {

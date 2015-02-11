@@ -2,6 +2,7 @@ package svm.predictor.data.retrieving;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class AttributeDataRetriever extends BaseDataRetriever {
 		if(attributeName.startsWith("home")) {
 			home = true;
 		} else if( !attributeName.startsWith("away")) {
-			throw new RuntimeException("Expected 'home' or 'away for at the beginning of the attribute name");
+			throw new RuntimeException("Expected 'home' or 'away at the beginning of the attribute name");
 		}
 		//remove home/away prefix
 		attributeName = attributeName.substring(4);
@@ -57,6 +58,27 @@ public class AttributeDataRetriever extends BaseDataRetriever {
 			logger.error("Error invoking method", e);
 			throw new RuntimeException("Error invoking method", e);
 		}
+	}
+	
+	@Override
+	protected List<String> getSimpleStatNames() {
+		List<String> result = super.getSimpleStatNames();
+		result.add("WinATSPct");
+		return result;
+	}
+	
+	@Override
+	protected List<String> getAggregatedStatNames() {
+		List<String> result = super.getAggregatedStatNames();
+		result.add("WinATSPct");
+		return result;
+	}
+	
+	@Override
+	protected List<String> getSpecificAttributesNames() {
+		List<String> result = super.getSpecificAttributesNames();
+		result.add("PointSpread");
+		return result;
 	}
 
 }

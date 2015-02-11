@@ -25,6 +25,7 @@ import svm.predictor.dto.TeamGameStatsDto;
 import svm.predictor.libsvm.data.scaling.DataScaler;
 import svm.predictor.libsvm.data.scaling.ScaleRestoreDto;
 import svm.predictor.libsvm.data.scaling.ScaleResultDto;
+import svm.predictor.utils.LearningFactory;
 
 public abstract class BasePredictionWebBean implements Serializable {
 
@@ -38,6 +39,9 @@ public abstract class BasePredictionWebBean implements Serializable {
 	
 	@Autowired
 	protected GameDataRetriever gameDataRetriever;
+	
+	@Autowired 
+	protected LearningFactory learningFactory;
 	
 	protected int leagueValue;
 	

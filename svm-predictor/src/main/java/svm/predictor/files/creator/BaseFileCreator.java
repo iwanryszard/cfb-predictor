@@ -9,21 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import svm.predictor.data.retrieving.Instance;
-import svm.predictor.dto.LearningCategory;
 
 public abstract class BaseFileCreator {
 
 	private static Logger logger = LoggerFactory.getLogger(BaseFileCreator.class);
 	
-	public void createFile(String fileName, List<Double> labels, List<Instance> instances, List<String> attributeNames, 
-			LearningCategory learningCategory) {
+	public void createFile(String fileName, List<Double> labels, List<Instance> instances, List<String> attributeNames) {
 		String fullFileName = fileName + getFileExtension();
 		BufferedWriter writer = null;
 		try {
 			File file = new File(fullFileName);
 			writer = new BufferedWriter(new FileWriter(file));
 			
-			StringBuilder header = getHeader(attributeNames, learningCategory);
+			StringBuilder header = getHeader(attributeNames);
 			writer.append(header);
 			
 			String dataStartMarker = getDataStartMarker();
@@ -49,7 +47,7 @@ public abstract class BaseFileCreator {
 	
 	protected abstract String getFileExtension();
 	
-	protected abstract StringBuilder getHeader(List<String> attributeNames, LearningCategory learningCategory);
+	protected abstract StringBuilder getHeader(List<String> attributeNames);
 	
 	protected abstract StringBuilder getDataLine(Double label, Instance instance, int attributeCount);
 	

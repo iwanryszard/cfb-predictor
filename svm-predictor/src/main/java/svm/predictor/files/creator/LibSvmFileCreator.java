@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import svm.predictor.data.retrieving.Attribute;
 import svm.predictor.data.retrieving.Instance;
-import svm.predictor.dto.LearningCategory;
 
 @Service("libSvmFileCreator")
 public class LibSvmFileCreator extends BaseFileCreator {
@@ -22,7 +21,7 @@ public class LibSvmFileCreator extends BaseFileCreator {
 	}
 
 	@Override
-	protected StringBuilder getHeader(List<String> attributeNames, LearningCategory learningCategory) {
+	protected StringBuilder getHeader(List<String> attributeNames) {
 		return new StringBuilder("");
 	}
 
