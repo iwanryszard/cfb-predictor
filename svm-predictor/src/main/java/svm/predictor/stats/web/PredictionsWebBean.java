@@ -38,11 +38,14 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	
 	private List<Double> expectedResult;
 	private List<Double> predictions;
+	private List<Double> awayExpectedResult;
+	private List<Double> awayPredictions;
 	private List<GameOddsDto> gamesOdds;
 	
 	private boolean modelTrained;
 	
 	private Classifier classifier;
+	private Classifier awayClassifier;
 	
 	private String selectedClassifierType;
 	private List<String> classifiers = Arrays.asList("libsvm", "wekaLibSVM", "wekaSMO", "wekaVotedPerceptron", 
@@ -58,6 +61,13 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		LearningCategory learningCategory = getLearningCategory();
 		ClassifierBuilder classifierBuilder = learningFactory.getClassifierBuilder(selectedClassifierType, learningCategory);
 		classifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType);
+		
+		if(winnerByRegression) {
+			homeAway = "away";
+			trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+			awayClassifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType);
+			homeAway = "home";
+		}
 		modelTrained = true;
 	}
 	
@@ -68,9 +78,20 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		expectedResult = testingData.getLabels();
 		predictions = evaluationResultDto.getPredictions();
 		gamesOdds = testingData.getGamesOdds();
-
+		
 		int correct = evaluationResultDto.getCorrect();
 		int total = testingData.getInstances().size();
+		
+		if(winnerByRegression) {
+			homeAway = "away";
+			testingData = getGamesData(testingStartYear, testingEndYear, minimumGamesPlayed, scaleData, lower, upper);
+			evaluationResultDto = awayClassifier.evaluate(testingData);
+			awayExpectedResult = testingData.getLabels();
+			awayPredictions = evaluationResultDto.getPredictions();
+			homeAway = "home";
+			
+			correct = getCorrectForWinnerByRegression(expectedResult, predictions, awayExpectedResult, awayPredictions);
+		}
 		
 		NumberFormat formatter = new DecimalFormat("#0.00");
 		double accuracy = (double) correct / total * 100;
@@ -102,6 +123,20 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		}
 		netWon = totalWon - totalStaked;
 		roiPct = (totalWon / totalStaked) * 100;
+	}
+	
+	private int getCorrectForWinnerByRegression(List<Double> homeExpected, List<Double> homePredictions, 
+			List<Double> awayExpected, List<Double> awayPredictions) {
+		int correct = 0;
+		for(int i = 0; i < homeExpected.size(); ++i) {
+			int target = homeExpected.get(i) >= awayExpected.get(i) ? 1 : -1;
+			int value = homePredictions.get(i) >= awayPredictions.get(i) ? 1 : -1;
+			if(target == value) {
+				++correct;
+			}
+		}
+		
+		return correct;
 	}
 
 	public String getResultMessage() {
@@ -203,7 +238,7 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	@Override
 	public void predictionTypeChanged() {
 		super.predictionTypeChanged();
-		if(attributeEnabled) {
+		if(attributeEnabled || winnerByRegression) {
 			classifierTypes = regressions;
 		} else {
 			classifierTypes = classifiers;

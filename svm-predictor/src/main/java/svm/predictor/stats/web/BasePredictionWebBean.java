@@ -47,7 +47,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	
 	protected ScaleRestoreDto scaleRestoreDto;
 	
-	protected List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Money Line", "Attribute");
+	protected List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Money Line", "Attribute", "Winner by Regression");
 	
 	protected String selectedPredictionType;
 	
@@ -67,6 +67,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	protected String selectedAttribute;
 	protected String homeAway;
 	protected boolean attributeEnabled;
+	protected boolean winnerByRegression;
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -88,6 +89,8 @@ public abstract class BasePredictionWebBean implements Serializable {
 			result = new MoneyLineDataRetriever(featureProvider);
 		} else if(selectedPredictionType.equals("Attribute")) {
 			result = new AttributeDataRetriever(featureProvider, homeAway + selectedAttribute);
+		} else if(selectedPredictionType.equals("Winner by Regression")) {
+			result = new AttributeDataRetriever(featureProvider, homeAway + "scoringOffPoints");
 		} else {
 			result = new PointSpreadDataRetriever(featureProvider);
 		}
@@ -117,7 +120,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	}
 	
 	protected LearningCategory getLearningCategory() {
-		if("Attribute".equals(selectedPredictionType)) {
+		if("Attribute".equals(selectedPredictionType) || "Winner by Regression".equals(selectedPredictionType)) {
 			return LearningCategory.REGRESSION;
 		} else {
 			return LearningCategory.CLASSIFICATION;
@@ -214,6 +217,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	
 	public void predictionTypeChanged() {
 		attributeEnabled = "Attribute".equals(selectedPredictionType);
+		winnerByRegression = "Winner by Regression".equals(selectedPredictionType);
 	}
 
 	public List<String> getAttributeNames() {
@@ -246,6 +250,14 @@ public abstract class BasePredictionWebBean implements Serializable {
 
 	public void setAttributeEnabled(boolean attributeEnabled) {
 		this.attributeEnabled = attributeEnabled;
+	}
+
+	public boolean getWinnerByRegression() {
+		return winnerByRegression;
+	}
+
+	public void setWinnerByRegression(boolean winnerByRegression) {
+		this.winnerByRegression = winnerByRegression;
 	}
 
 }
