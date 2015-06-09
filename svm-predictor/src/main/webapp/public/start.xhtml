@@ -10,11 +10,12 @@
 	  >
   <ui:define name="content">
   <h:form id="statsForm" prependId="false"> 
- 	<p:selectOneMenu id="leagues" value="#{startWebBean.leagueValue}">
-       <f:selectItem itemLabel="CFB" itemValue="0" />
-       <f:selectItem itemLabel="NFL" itemValue="1" />
-    </p:selectOneMenu>
     <p:panelGrid columns="2">
+        <h:outputText value="League:" /> 
+        <p:selectOneMenu id="leagues" value="#{startWebBean.leagueValue}" style="width:100px">
+        	<f:selectItem itemLabel="CFB" itemValue="0" />
+        	<f:selectItem itemLabel="NFL" itemValue="1" />
+        </p:selectOneMenu>
  		<h:outputText value="Start season" /> 
  		<h:outputText value="End season" /> 
  		<p:inputText id="startSeason" value="#{startWebBean.startYear}" required="true"/>

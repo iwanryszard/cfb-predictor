@@ -47,7 +47,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	
 	protected ScaleRestoreDto scaleRestoreDto;
 	
-	protected List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Money Line", "Attribute", "Winner by Regression");
+	protected List<String> predictionTypes = Arrays.asList("Point Spread", "Point Total", "Winner", "Attribute", "Winner by Regression");
 	
 	protected String selectedPredictionType;
 	
@@ -85,7 +85,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 			result = new PointSpreadDataRetriever(featureProvider);
 		} else if(selectedPredictionType.equals("Point Total")) {
 			result = new PointTotalDataRetriever(featureProvider);
-		} else if(selectedPredictionType.equals("Money Line")) {
+		} else if(selectedPredictionType.equals("Winner")) {
 			result = new MoneyLineDataRetriever(featureProvider);
 		} else if(selectedPredictionType.equals("Attribute")) {
 			result = new AttributeDataRetriever(featureProvider, homeAway + selectedAttribute);

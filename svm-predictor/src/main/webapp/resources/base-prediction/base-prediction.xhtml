@@ -13,27 +13,28 @@
     </composite:interface>
  
     <composite:implementation>
- 
-		<p:selectOneMenu id="leagues" value="#{cc.attrs.bean.leagueValue}">
-       		<f:selectItem itemLabel="CFB" itemValue="0" />
-       		<f:selectItem itemLabel="NFL" itemValue="1" />
-    	</p:selectOneMenu>
-    
-  		<p:selectOneMenu id="predictionType" value="#{cc.attrs.bean.selectedPredictionType}">
-        	<f:selectItems value="#{cc.attrs.bean.predictionTypes}" />
-        	<p:ajax listener="#{cc.attrs.bean.predictionTypeChanged()}" update="@(.attribute)" />
-    	</p:selectOneMenu>
-    	
-    	<p:selectOneMenu id="attributeHomeAway" value="#{cc.attrs.bean.homeAway}" styleClass="attribute" disabled="#{ !cc.attrs.bean.attributeEnabled}">
-       		<f:selectItem itemLabel="Home" itemValue="home" />
-       		<f:selectItem itemLabel="Away" itemValue="away" />
-    	</p:selectOneMenu>
-    	
-    	<p:selectOneMenu id="attributeSelector" value="#{cc.attrs.bean.selectedAttribute}" styleClass="attribute" disabled="#{ !cc.attrs.bean.attributeEnabled}">
-       		<f:selectItems value="#{cc.attrs.bean.attributeNames}" />
-    	</p:selectOneMenu>
-        
  		<p:panelGrid columns="2">
+ 		    <h:outputText value="League" />
+ 		    <p:selectOneMenu id="leagues" value="#{cc.attrs.bean.leagueValue}" style="width:100px">
+       			<f:selectItem itemLabel="CFB" itemValue="0" />
+       			<f:selectItem itemLabel="NFL" itemValue="1" />
+    		</p:selectOneMenu>
+    		 
+    		<h:outputText value="Prediction type" />
+    		<p:selectOneMenu id="predictionType" value="#{cc.attrs.bean.selectedPredictionType}">
+        		<f:selectItems value="#{cc.attrs.bean.predictionTypes}" />
+        		<p:ajax listener="#{cc.attrs.bean.predictionTypeChanged()}" update="@(.attribute)" />
+    		</p:selectOneMenu>
+    		
+    		<p:selectOneMenu id="attributeHomeAway" value="#{cc.attrs.bean.homeAway}" styleClass="attribute" disabled="#{ !cc.attrs.bean.attributeEnabled}">
+       			<f:selectItem itemLabel="Home" itemValue="home" />
+       			<f:selectItem itemLabel="Away" itemValue="away" />
+    		</p:selectOneMenu>
+    	
+    		<p:selectOneMenu id="attributeSelector" value="#{cc.attrs.bean.selectedAttribute}" styleClass="attribute" disabled="#{ !cc.attrs.bean.attributeEnabled}">
+       			<f:selectItems value="#{cc.attrs.bean.attributeNames}" />
+    		</p:selectOneMenu>
+    	 
  			<h:outputText value="Training start season" /> 
  			<h:outputText value="Training end season" /> 
  			<p:inputText id="trainingStart" value="#{cc.attrs.bean.trainingStartYear}" required="true"/>
