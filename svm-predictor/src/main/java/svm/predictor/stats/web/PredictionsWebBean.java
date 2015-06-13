@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import svm.predictor.data.retrieving.BaseDataRetriever;
 import svm.predictor.data.retrieving.GameDataDto;
 import svm.predictor.data.retrieving.GameOddsDto;
 import svm.predictor.dto.LearningCategory;
@@ -79,6 +80,19 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		predictions = evaluationResultDto.getPredictions();
 		gamesOdds = testingData.getGamesOdds();
 		
+		BaseDataRetriever dataRetriever = getDataRetriever();
+		
+		for(int i = 0; i < predictions.size(); ++i) {
+			GameOddsDto odds = gamesOdds.get(i);
+			Double prediction = predictions.get(i);
+			if(prediction.equals(expectedResult.get(i))) {
+				odds.setCorrect(true);
+			}
+			
+			String predictionName = dataRetriever.getPrediction(prediction, odds);
+			odds.setPrediction(predictionName);
+		}
+		
 		int correct = evaluationResultDto.getCorrect();
 		int total = testingData.getInstances().size();
 		
@@ -127,12 +141,19 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	
 	private int getCorrectForWinnerByRegression(List<Double> homeExpected, List<Double> homePredictions, 
 			List<Double> awayExpected, List<Double> awayPredictions) {
+		NumberFormat formatter = new DecimalFormat("#0.00");
 		int correct = 0;
 		for(int i = 0; i < homeExpected.size(); ++i) {
 			int target = homeExpected.get(i) >= awayExpected.get(i) ? 1 : -1;
-			int value = homePredictions.get(i) >= awayPredictions.get(i) ? 1 : -1;
+			double homePrediction = homePredictions.get(i);
+			double awayPrediction = awayPredictions.get(i);
+			int value = homePrediction >= awayPrediction ? 1 : -1;
+			GameOddsDto odds = gamesOdds.get(i);
+			String prediction = formatter.format(awayPrediction) + " - " + formatter.format(homePrediction);
+			odds.setPrediction(prediction);
 			if(target == value) {
 				++correct;
+				odds.setCorrect(true);
 			}
 		}
 		
@@ -243,6 +264,14 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		} else {
 			classifierTypes = classifiers;
 		}
+	}
+
+	public List<GameOddsDto> getGamesOdds() {
+		return gamesOdds;
+	}
+
+	public void setGamesOdds(List<GameOddsDto> gamesOdds) {
+		this.gamesOdds = gamesOdds;
 	}
 
 }

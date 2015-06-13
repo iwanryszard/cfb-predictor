@@ -48,10 +48,11 @@ public class MoneyLineDataRetriever extends BaseDataRetriever {
 	}
 	
 	@Override
-	public void addGameOdds(GameInfoDto game, List<GameOddsDto> gamesOdds) {
+	public GameOddsDto addGameOdds(GameInfoDto game, List<GameOddsDto> gamesOdds) {
 		GameOddsDto odds = new GameOddsDto();
 		odds.setAwayOdds(game.getAwayStraightOdds());
 		odds.setHomeOdds(game.getHomeStraightOdds());
 		gamesOdds.add(odds);
+		return odds;
 	}
 }

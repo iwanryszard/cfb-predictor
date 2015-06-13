@@ -65,7 +65,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 	
 	protected List<String> attributeNames;
 	protected String selectedAttribute;
-	protected String homeAway;
+	protected String homeAway = "home";
 	protected boolean attributeEnabled;
 	protected boolean winnerByRegression;
 	
@@ -78,7 +78,7 @@ public abstract class BasePredictionWebBean implements Serializable {
 		}
 	}
 	
-	private BaseDataRetriever getDataRetriever() {
+	protected BaseDataRetriever getDataRetriever() {
 		BaseDataRetriever result = null;
 		SupportedFeaturesProvider featureProvider = getSupportedFeaturesProvider();
 		if(selectedPredictionType.equals("Point Spread")) {

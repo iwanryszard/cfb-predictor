@@ -46,4 +46,16 @@ public class PointTotalDataRetriever extends BaseDataRetriever {
 		result.add("PointTotal");
 		return result;
 	}
+	
+	@Override
+	public String getPrediction(Double prediction, GameOddsDto gameOdds) {
+		String result = "";
+		if(prediction.equals(1.0)) {
+			result = "Under";
+		} else {
+			result = "Over";
+		}
+		
+		return result;
+	}
 }

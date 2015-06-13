@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import svm.predictor.dto.AggregatedGameStatsDto;
 import svm.predictor.dto.GameInfoDto;
 import svm.predictor.service.AggregatedGameStatsService;
+import svm.predictor.service.TeamService;
 import svm.predictor.utils.SeasonBoundariesProvider;
 
 @Service("svmDataRetriever")
@@ -27,6 +28,9 @@ public class GameDataRetriever {
 	
 	@Autowired
 	private SeasonBoundariesProvider seasonBoundariesProvider;
+	
+	@Autowired
+	private TeamService teamService;
 	
 	public GameDataDto getGameData(int startSeason, int endSeason, Integer minimumGamesPlayed, BaseDataRetriever dataRetriever) {
 		Date seasonStart = seasonBoundariesProvider.getSeasonStartDate(startSeason);
@@ -44,6 +48,8 @@ public class GameDataRetriever {
 		List<AggregatedGameStatsDto> aggregatedGames = aggregatedGameStatsService.list(params, null);
 		logger.info("Fetched {} game aggregations from {} to {}", aggregatedGames.size(), startSeason, endSeason);
 		
+		Map<Integer, String> teamNames = teamService.getTeamNamesMap(dataRetriever.getLeague());
+		
 		List<Double> labels = new ArrayList<Double>(aggregatedGames.size());
 		List<Instance> instances = new ArrayList<Instance>(aggregatedGames.size());
 		List<GameOddsDto> gamesOdds = new ArrayList<GameOddsDto>();
@@ -56,7 +62,13 @@ public class GameDataRetriever {
 			Instance instance = dataRetriever.getInstance(aggregatedGame);
 			instances.add(instance);
 			
-			dataRetriever.addGameOdds(currentGame, gamesOdds);
+			GameOddsDto odds = dataRetriever.addGameOdds(currentGame, gamesOdds);
+			String homeTeam = teamNames.get(currentGame.getHomeTeamId());
+			odds.setHomeTeam(homeTeam);
+			String awayTeam = teamNames.get(currentGame.getAwayTeamId());
+			odds.setAwayTeam(awayTeam);
+			odds.setHomeTeamPoints(currentGame.getHomeTeamPoints());
+			odds.setAwayTeamPoints(currentGame.getAwayTeamPoints());
 		}
 		
 		logger.info("Labels size: {}", labels.size());

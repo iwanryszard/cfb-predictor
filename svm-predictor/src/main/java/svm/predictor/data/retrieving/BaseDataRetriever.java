@@ -148,12 +148,24 @@ public abstract class BaseDataRetriever {
 		return instance;
 	}
 	
-	public void addGameOdds(GameInfoDto game, List<GameOddsDto> gamesOdds) {
+	public GameOddsDto addGameOdds(GameInfoDto game, List<GameOddsDto> gamesOdds) {
 		//default implementation for point spread and point total lines - standard odds are 1.91
 		GameOddsDto odds = new GameOddsDto();
 		odds.setAwayOdds(1.91);
 		odds.setHomeOdds(1.91);
 		gamesOdds.add(odds);
+		return odds;
+	}
+	
+	public String getPrediction(Double prediction, GameOddsDto gameOdds) {
+		String result = "";
+		if(prediction.equals(1.0)) {
+			result = gameOdds.getHomeTeam();
+		} else {
+			result = gameOdds.getAwayTeam();
+		}
+		
+		return result;
 	}
 	
 	public League getLeague() {
