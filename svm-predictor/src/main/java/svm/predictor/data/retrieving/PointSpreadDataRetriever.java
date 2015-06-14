@@ -46,4 +46,16 @@ public class PointSpreadDataRetriever extends BaseDataRetriever {
 		result.add("PointSpread");
 		return result;
 	}
+	
+	@Override
+	public String getPrediction(Double prediction, GameOddsDto gameOdds) {
+		String result = super.getPrediction(prediction, gameOdds);
+		if(prediction.equals(1.0)) {
+			result = result + " " + formatter.format(gameOdds.getPointSpread());
+		} else {
+			result = result + " " + formatter.format(-1 * gameOdds.getPointSpread());
+		}
+		
+		return result;
+	}
 }

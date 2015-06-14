@@ -80,5 +80,12 @@ public class AttributeDataRetriever extends BaseDataRetriever {
 		result.add("PointSpread");
 		return result;
 	}
+	
+	@Override
+	public String getPrediction(Double prediction, GameOddsDto gameOdds) {
+		String result = formatter.format(prediction);;
+		
+		return result;
+	}
 
 }

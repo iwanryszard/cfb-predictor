@@ -50,10 +50,11 @@ public class PointTotalDataRetriever extends BaseDataRetriever {
 	@Override
 	public String getPrediction(Double prediction, GameOddsDto gameOdds) {
 		String result = "";
+		String pointTotal = formatter.format(gameOdds.getPointTotal());
 		if(prediction.equals(1.0)) {
-			result = "Under";
+			result = "Under " + pointTotal;
 		} else {
-			result = "Over";
+			result = "Over " + pointTotal;
 		}
 		
 		return result;

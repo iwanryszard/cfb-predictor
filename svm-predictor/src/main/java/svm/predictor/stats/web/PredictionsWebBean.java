@@ -54,6 +54,11 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 	private List<String> regressions = Arrays.asList("wekaLinearRegression");
 	private List<String> classifierTypes = classifiers;
 	
+	private List<String> attributeSelections = Arrays.asList("", "Ranker", "Cfs", "Symmetric");
+	private String selectedAttributeSelection;
+	
+	private Double errorCost = 1.0;
+	
 	public void trainModel() {
 		modelTrained = false;
 		scaleRestoreDto = null;
@@ -61,12 +66,12 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		trainingSummaryMsg = trainingData.getLabels().size() + " games with " + trainingData.getAttributeNames().size() + " attributes each";
 		LearningCategory learningCategory = getLearningCategory();
 		ClassifierBuilder classifierBuilder = learningFactory.getClassifierBuilder(selectedClassifierType, learningCategory);
-		classifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType);
+		classifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType, selectedAttributeSelection, errorCost);
 		
 		if(winnerByRegression) {
 			homeAway = "away";
 			trainingData = getGamesData(trainingStartYear, trainingEndYear, minimumGamesPlayed, scaleData, lower, upper);
-			awayClassifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType);
+			awayClassifier = classifierBuilder.buildClassifier(trainingData, selectedClassifierType, selectedAttributeSelection, errorCost);
 			homeAway = "home";
 		}
 		modelTrained = true;
@@ -80,12 +85,15 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 		predictions = evaluationResultDto.getPredictions();
 		gamesOdds = testingData.getGamesOdds();
 		
+		NumberFormat formatter = new DecimalFormat("#0.00");
 		BaseDataRetriever dataRetriever = getDataRetriever();
 		
 		for(int i = 0; i < predictions.size(); ++i) {
 			GameOddsDto odds = gamesOdds.get(i);
 			Double prediction = predictions.get(i);
-			if(prediction.equals(expectedResult.get(i))) {
+			Double expected = expectedResult.get(i);
+			odds.setExpectedValue(formatter.format(expected));
+			if(prediction.equals(expected)) {
 				odds.setCorrect(true);
 			}
 			
@@ -107,7 +115,6 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 			correct = getCorrectForWinnerByRegression(expectedResult, predictions, awayExpectedResult, awayPredictions);
 		}
 		
-		NumberFormat formatter = new DecimalFormat("#0.00");
 		double accuracy = (double) correct / total * 100;
 		resultMessage = "Accuracy = " + formatter.format(accuracy) + "% (" + correct + "/" + total + ") (classification)";
 		if(attributeEnabled) {
@@ -272,6 +279,30 @@ public class PredictionsWebBean extends BasePredictionWebBean {
 
 	public void setGamesOdds(List<GameOddsDto> gamesOdds) {
 		this.gamesOdds = gamesOdds;
+	}
+
+	public List<String> getAttributeSelections() {
+		return attributeSelections;
+	}
+
+	public void setAttributeSelections(List<String> attributeSelections) {
+		this.attributeSelections = attributeSelections;
+	}
+
+	public String getSelectedAttributeSelection() {
+		return selectedAttributeSelection;
+	}
+
+	public void setSelectedAttributeSelection(String selectedAttributeSelection) {
+		this.selectedAttributeSelection = selectedAttributeSelection;
+	}
+
+	public Double getErrorCost() {
+		return errorCost;
+	}
+
+	public void setErrorCost(Double errorCost) {
+		this.errorCost = errorCost;
 	}
 
 }

@@ -69,6 +69,8 @@ public class GameDataRetriever {
 			odds.setAwayTeam(awayTeam);
 			odds.setHomeTeamPoints(currentGame.getHomeTeamPoints());
 			odds.setAwayTeamPoints(currentGame.getAwayTeamPoints());
+			odds.setPointSpread(currentGame.getPointSpread());
+			odds.setPointTotal(currentGame.getPointTotal());
 		}
 		
 		logger.info("Labels size: {}", labels.size());

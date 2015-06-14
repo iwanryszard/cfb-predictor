@@ -4,5 +4,5 @@ import svm.predictor.data.retrieving.GameDataDto;
 
 public interface ClassifierBuilder {
 
-	Classifier buildClassifier(GameDataDto gamesData, String classifierType);
+	Classifier buildClassifier(GameDataDto gamesData, String classifierType, String attributeSelection, Double cost);
 }

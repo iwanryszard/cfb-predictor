@@ -4,10 +4,13 @@ public class GameOddsDto {
 
 	private Double homeOdds;
 	private Double awayOdds;
+	private Double pointSpread;
+	private Double pointTotal;
 	private String homeTeam;
 	private String awayTeam;
 	private int homeTeamPoints;
 	private int awayTeamPoints;
+	private String expectedValue;
 	private String prediction;
 	private boolean correct;
 	
@@ -58,5 +61,23 @@ public class GameOddsDto {
 	}
 	public void setCorrect(boolean correct) {
 		this.correct = correct;
+	}
+	public Double getPointSpread() {
+		return pointSpread;
+	}
+	public void setPointSpread(Double pointSpread) {
+		this.pointSpread = pointSpread;
+	}
+	public Double getPointTotal() {
+		return pointTotal;
+	}
+	public void setPointTotal(Double pointTotal) {
+		this.pointTotal = pointTotal;
+	}
+	public String getExpectedValue() {
+		return expectedValue;
+	}
+	public void setExpectedValue(String expectedValue) {
+		this.expectedValue = expectedValue;
 	}
 }

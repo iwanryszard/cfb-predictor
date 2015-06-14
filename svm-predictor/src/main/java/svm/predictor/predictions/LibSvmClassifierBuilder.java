@@ -19,7 +19,7 @@ public class LibSvmClassifierBuilder implements ClassifierBuilder {
 	private SvmPredictor svmPredictor;
 	
 	@Override
-	public Classifier buildClassifier(GameDataDto gamesData, String classifierType) {
+	public Classifier buildClassifier(GameDataDto gamesData, String classifierType, String attributeSelection, Double cost) {
 		svm_model model = svmTrainer.trainModel(gamesData.getLabels(), gamesData.getInstances());
 		return new LibSvmClassifier(model, svmPredictor);
 	}

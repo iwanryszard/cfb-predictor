@@ -1,6 +1,8 @@
 package svm.predictor.data.retrieving;
 
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +22,11 @@ public abstract class BaseDataRetriever {
 	
 	protected SupportedFeaturesProvider supportedFeaturesProvider;
 	
+	protected NumberFormat formatter;
+	
 	public BaseDataRetriever(SupportedFeaturesProvider supportedFeaturesProvider) {
 		this.supportedFeaturesProvider = supportedFeaturesProvider;
+		formatter = new DecimalFormat("#0.0");
 	}
 
 	public abstract Map<String, String> getSpecificParams();
